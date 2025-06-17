@@ -212,37 +212,61 @@ public class DmpService {
   }
 
   /**
-   * getDefaultFileName.
+   * Default filename for a DMP based on a priority order: DMP Title Project information with prefix
+   * and date Fallback to ID-based name
    *
-   * @param id a long
-   * @return a {@link java.lang.String} object
+   * @param id The ID of the DMP
+   * @return A sanitized filename string
    */
   public String getDefaultFileName(long id) {
     Date date = new Date();
-    SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
-
-    String filename = "My Data Management Plan";
+    String formattedDate = new SimpleDateFormat("yyyyMMdd").format(date);
 
     Dmp dmp = dmpRepo.findById(id);
-    if (dmp != null) {
-      if (dmp.getProject() != null) {
-        if (dmp.getProject().getUniversityId() != null
-            && projectService.read(dmp.getProject().getUniversityId()) != null) {
-          filename =
-              "DMP_"
-                  + projectService.read(dmp.getProject().getUniversityId()).getAcronym()
-                  + "_"
-                  + formatter.format(date);
-        } else if (dmp.getProject().getTitle() != null)
-          filename = "DMP_" + dmp.getProject().getTitle() + "_" + formatter.format(date);
-      } else {
-        if (dmp.getTitle() != null) filename = dmp.getTitle();
-      }
+    if (dmp == null) {
+      return "My Data Management Plan";
     }
 
-    filename = filename.replaceAll("[\"',\\s]+", "_");
+    if (hasDmpTitle(dmp)) {
+      return sanitizeFileName(dmp.getTitle());
+    }
 
-    return filename;
+    String projectName = extractProjectName(dmp);
+    if (projectName != null) {
+      return formatProjectBasedName(projectName, formattedDate);
+    }
+
+    return formatDefaultName(id, formattedDate);
+  }
+
+  private boolean hasDmpTitle(Dmp dmp) {
+    return dmp.getTitle() != null && !dmp.getTitle().trim().isEmpty();
+  }
+
+  private String extractProjectName(Dmp dmp) {
+    if (dmp.getProject() == null) {
+      return null;
+    }
+
+    String universityId = dmp.getProject().getUniversityId();
+    ProjectDO universityProject = (universityId != null) ? projectService.read(universityId) : null;
+
+    if (universityProject != null && universityProject.getAcronym() != null) {
+      return universityProject.getAcronym();
+    }
+    return dmp.getProject().getTitle();
+  }
+
+  private String formatProjectBasedName(String name, String date) {
+    return String.format("DMP_%s_%s", name, date).replaceAll("[\"',\\s]+", "_");
+  }
+
+  private String formatDefaultName(long id, String date) {
+    return String.format("DMP_%d_%s", id, date);
+  }
+
+  private String sanitizeFileName(String name) {
+    return name.replaceAll("[\"',\\s]+", "_");
   }
 
   /**
