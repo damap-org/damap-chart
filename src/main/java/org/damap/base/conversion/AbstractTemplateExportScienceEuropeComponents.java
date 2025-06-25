@@ -378,15 +378,27 @@ public abstract class AbstractTemplateExportScienceEuropeComponents
     }
 
     boolean usesExternalStorage =
-        dmp.getHostList().stream().anyMatch(ExternalStorage.class::isInstance);
-    boolean usesInternalStorage = dmp.getHostList().stream().anyMatch(Storage.class::isInstance);
+        dmp.getHostList().stream()
+            .filter(ExternalStorage.class::isInstance)
+            .map(ExternalStorage.class::cast)
+            .anyMatch(
+                storage ->
+                    storage.getIsManagedInternally() != null && !storage.getIsManagedInternally());
+
+    boolean isManagedInternally =
+        dmp.getHostList().stream()
+            .anyMatch(
+                host ->
+                    (host instanceof Storage)
+                        || (host instanceof ExternalStorage
+                            && ((ExternalStorage) host).getIsManagedInternally()));
 
     String propName = "storageIntro.none";
-    if (usesExternalStorage && !usesInternalStorage) {
+    if (usesExternalStorage && !isManagedInternally) {
       propName = "storageIntro.external";
-    } else if (usesInternalStorage && !usesExternalStorage) {
+    } else if (isManagedInternally && !usesExternalStorage) {
       propName = "storageIntro.internal";
-    } else if (usesInternalStorage && usesExternalStorage) {
+    } else if (isManagedInternally && usesExternalStorage) {
       propName = "storageIntro.both";
     }
 
@@ -552,7 +564,10 @@ public abstract class AbstractTemplateExportScienceEuropeComponents
                       + " "
                       + hostVar
                       + ".");
-          if (dmp.getExternalStorageInfo() != null && !dmp.getExternalStorageInfo().isEmpty()) {
+          if (dmp.getExternalStorageInfo() != null
+              && !dmp.getExternalStorageInfo().isEmpty()
+              && ((ExternalStorage) host).getIsManagedInternally() != null
+              && !((ExternalStorage) host).getIsManagedInternally()) {
             storageVar =
                 storageVar.concat(
                     " "
