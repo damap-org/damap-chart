@@ -1,4 +1,4 @@
-name: Release
+name: Release Helm Chart (Dev)
 
 env:
   REGISTRY: ghcr.io
@@ -44,10 +44,10 @@ jobs:
 
           echo "base_version=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Check if base dev version already exists
+      - name: Check if base dev version already exists (published)
         run: |
           set -e
-          BASE_VERSION=$(grep '^version:' helm/Chart.yaml | awk '{print $2}')
+          BASE_VERSION="${{ steps.validate.outputs.base_version }}"
           CHART=$(grep '^name:' helm/Chart.yaml | awk '{print $2}')
           REPO="oci://${{ env.REGISTRY }}/${{ github.repository_owner }}"
 
@@ -81,22 +81,6 @@ jobs:
           NAME=$(grep '^name:' helm/Chart.yaml | awk '{print $2}')
           echo "name=$NAME" >> $GITHUB_OUTPUT
 
-      - name: Check if version exists in registry
-        run: |
-          set -e
-
-          CHART="${{ steps.chart.outputs.name }}"
-          VERSION="${{ steps.version.outputs.version }}"
-          REPO="oci://${{ env.REGISTRY }}/${{ github.repository_owner }}"
-
-          echo "Checking if $CHART:$VERSION exists..."
-
-          if helm pull "$REPO/$CHART" --version "$VERSION" > /dev/null 2>&1; then
-            echo "❌ Version already exists in registry!"
-            exit 1
-          else
-            echo "✅ Version does not exist, safe to publish."
-          fi
       - name: Helm Lint
         run: helm lint helm/
 

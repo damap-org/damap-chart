@@ -3,7 +3,7 @@ name: damap-chart
 description: A tool to create machine-actionable data management plans.
 type: application
 
-version: 0.1.0-dev.2
+version: 0.1.0-dev.3
 appVersion: "5.0.0-rc.1"
 
 kubeVersion: ">=1.25.0"
@@ -33,4 +33,4 @@ annotations:
   artifacthub.io/prerelease: "true"
   artifacthub.io/changes: |
     - kind: fixed
-      description: Use correct Keycloak values tlsClusterIssuer and ingressClass in the ingress template.
+      description: Add pre-install and pre-upgrade hook for the damap secret. Prevents missing-secret errors when the multitenancy DB initialization job is enabled.
