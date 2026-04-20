@@ -78,6 +78,13 @@ spec:
       initContainers:
         - name: multitenant-db-check
           image: postgres:16
+          resources:
+            requests:
+              cpu: 10m
+              memory: 256Mi
+            limits:
+              cpu: "0.25"
+              memory: 512Mi
           securityContext:
             {{- if not .Values.openshift }}
             runAsUser: 999
