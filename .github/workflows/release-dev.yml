@@ -70,14 +70,17 @@ jobs:
 
           LATEST_DEV=$(
             echo "$TAGS" \
-              | grep -oE '[0-9]+\.[0-9]+\.[0-9]+-dev\.[0-9]+' \
+              | grep -oE '[0-9]+\.[0-9]+\.[0-9]+-dev\.[0-9]+' || true \
               | sed -E 's/.*-dev\.([0-9]+)/\1/' \
               | sort -n \
               | tail -1
           )
 
-          if [ -z "${LATEST_DEV:-}" ]; then
-            LATEST_DEV=-1
+          LATEST_DEV=${LATEST_DEV:-0}
+
+          if [[ -z "${LATEST_DEV}" ]]; then
+            echo "No previous dev versions found, treating as first dev release."
+            LATEST_DEV=0
           fi
 
           echo "Latest published dev number: $LATEST_DEV"
