@@ -35,12 +35,12 @@ kind: Ingress
 metadata:
   name: keycloak
   namespace: "{{ .Release.Namespace }}"
-  {{- if and (eq .Values.keycloak.protocol "https") (.Values.keycloak.tls_cluster_issuer) }}
+  {{- if and (eq .Values.keycloak.protocol "https") (.Values.keycloak.tlsClusterIssuer) }}
   annotations:
     cert-manager.io/cluster-issuer: {{ .Values.keycloak.tlsClusterIssuer }}
   {{- end }}
 spec:
-  {{- if .Values.keycloak.ingress_class }}
+  {{- if .Values.keycloak.ingressClass }}
   ingressClassName: {{ .Values.keycloak.ingressClass }}
   {{- end }}
   {{- if eq .Values.keycloak.protocol "https" }}
