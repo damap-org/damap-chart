@@ -84,8 +84,10 @@ damap:
   projectService: elsevier-pure
   protocol: http
   storageClassName: ""
+  storageSize: 5Gi
   tlsClusterIssuer: ""
   useExistingSecret: false
+  useHostFolder: true # use host folder for persistence (only for demo/small scale deployments, not for production)
 
 frontend:
   # Set this to true to provide your logo in SVG format (base64-encoded) here. Note that
@@ -112,8 +114,10 @@ keycloak:
   persistData: false
   protocol: http
   storageClassName: ""
+  storageSize: 5Gi
   tlsClusterIssuer: ""
   useExistingSecret: false
+  useHostFolder: true # use host folder for persistence (only for demo/small scale deployments, not for production)
 
 oidc:
   # Role name used to identify DAMAP super admins
