@@ -14,7 +14,7 @@ customBuild:
     repo: https://github.com/damap-org/damap-frontend
 
 damap:
-  backendVersion: 5.0.0-rc.2
+  backendVersion: 5.0.0-rc.3
   customDomain: false
   dbName: damap
   # NOTE: When db_password is empty, Helm will try to reuse the existing Secret if present.
@@ -24,7 +24,7 @@ damap:
   dbPassword: "damap_pass" # Empty defaults to auto-generate.
   dbUser: damap
   evaluationServiceUrl: "" # DMP evaluation service URL, e.g., "https://dmp-evaluation-service.example.com". Empty string disables the integration.
-  frontendVersion: 5.0.0-rc.2
+  frontendVersion: 5.0.0-rc.3
   # Host folder to persist data for demo / small scale deployments.
   # NOTE: Do not use for production!
   hostFolder: /tmp/damap
