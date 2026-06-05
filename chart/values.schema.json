@@ -128,6 +128,12 @@
           "description": "Username for the PostgreSQL server.",
           "type": "string"
         },
+        "evaluationServiceUrl": {
+          "title": "DMP evaluation service URL",
+          "description": "URL for the DMP evaluation service to integrate with. This should be the URL of your DMP evaluation service instance, e.g., 'https://dmp-evaluation-service.example.com'. If left empty, the integration with the DMP evaluation service will be disabled.",
+          "type": "string",
+          "format": "url"
+        },
         "frontendVersion": {
           "title": "Frontend image",
           "description": "Container image for the frontend",

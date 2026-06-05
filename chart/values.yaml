@@ -23,6 +23,7 @@ damap:
   # This mismatch can cause DB/service failures. Use a fixed password or pre-created Secret to ensure stability.
   dbPassword: "damap_pass" # Empty defaults to auto-generate.
   dbUser: damap
+  evaluationServiceUrl: "" # DMP evaluation service URL, e.g., "https://dmp-evaluation-service.example.com". Empty string disables the integration.
   frontendVersion: 5.0.0-rc.2
   # Host folder to persist data for demo / small scale deployments.
   # NOTE: Do not use for production!
