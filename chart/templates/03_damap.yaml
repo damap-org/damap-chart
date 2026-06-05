@@ -180,8 +180,8 @@ spec:
             {{- /*
             Database configuration
             */}}
-            - name: QUARKUS_DATASOURCE_JDBC_URL
-              value: "jdbc:postgresql://damap-db:5432/{{ .Values.damap.dbName }}"
+            - name: QUARKUS_DATASOURCE_DB_KIND
+              value: postgresql
             - name: QUARKUS_DATASOURCE_USERNAME
               valueFrom:
                 secretKeyRef:
