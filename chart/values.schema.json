@@ -98,6 +98,7 @@
         "dbPassword",
         "dbUser",
         "hostname",
+        "projectService",
         "protocol"
       ],
       "properties": {
@@ -132,7 +133,15 @@
           "title": "DMP evaluation service URL",
           "description": "URL for the DMP evaluation service to integrate with. This should be the URL of your DMP evaluation service instance, e.g., 'https://dmp-evaluation-service.example.com'. If left empty, the integration with the DMP evaluation service will be disabled.",
           "type": "string",
-          "format": "url"
+          "anyOf": [
+            {
+              "maxLength": 0
+            },
+            {
+              "format": "url"
+            }
+          ],
+          "default": ""
         },
         "frontendVersion": {
           "title": "Frontend image",
@@ -177,8 +186,88 @@
             },
             "tenants": {
               "title": "Tenants",
-              "description": "List of tenants to create. The tenant name will be used as the database name.",
-              "type": "object"
+              "description": "Map of tenant identifiers to tenant-specific DAMAP configuration. Each tenant key is also used as the database name.",
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "fields": {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  "project-service": {
+                    "type": "string"
+                  },
+                  "elsevier-pure-description-classification": {
+                    "type": "string"
+                  },
+                  "elsevier-pure-contributor-role-classifications": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "pure-role-uri",
+                        "contributor-role"
+                      ],
+                      "properties": {
+                        "pure-role-uri": {
+                          "type": "string"
+                        },
+                        "contributor-role": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "elsevier-pure-project-lead-role-classification": {
+                    "type": "string"
+                  },
+                  "elsevier-pure-backend": {
+                    "type": "string",
+                    "enum": [
+                      "file",
+                      "http"
+                    ]
+                  },
+                  "elsevier-pure-endpoint-url": {
+                    "type": "string"
+                  },
+                  "elsevier-pure-api-key": {
+                    "type": "string"
+                  },
+                  "elsevier-pure-projects-file": {
+                    "type": "string"
+                  },
+                  "elsevier-pure-persons-file": {
+                    "type": "string"
+                  },
+                  "person-services": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "display-text",
+                        "query-value",
+                        "class-name"
+                      ],
+                      "properties": {
+                        "display-text": {
+                          "type": "string"
+                        },
+                        "query-value": {
+                          "type": "string"
+                        },
+                        "class-name": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             }
           }
         },
@@ -211,6 +300,12 @@
               }
             }
           }
+        },
+        "projectService": {
+          "title": "Project service",
+          "description": "Service used to fetch and manage project metadata.",
+          "type": "string",
+          "default": "elsevier-pure"
         },
         "protocol": {
           "title": "Protocol",
@@ -274,7 +369,7 @@
           "contentEncoding": "base64",
           "default": ""
         },
-        "logo_cropped": {
+        "logoCropped": {
           "title": "Logo (front page)",
           "description": "Logo for the front page in SVG format.",
           "type": "string",
@@ -312,7 +407,9 @@
         },
         "customDomain": {
           "title": "Custom domain",
-          "description": "Use a custom domain for the ingress. You have to configure the DNS records for the custom domain yourself."
+          "description": "Use a custom domain for the ingress. You have to configure the DNS records for the custom domain yourself.",
+          "type": "boolean",
+          "default": false
         },
         "dbName": {
           "title": "Database name",
