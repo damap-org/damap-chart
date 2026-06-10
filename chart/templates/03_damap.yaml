@@ -180,6 +180,10 @@ spec:
             {{- /*
             Database configuration
             */}}
+            - name: DAMAP_DB_HOST
+              value: damap-db
+            - name: DAMAP_DB_PORT
+              value: "5432"
             - name: QUARKUS_DATASOURCE_DB_KIND
               value: postgresql
             - name: QUARKUS_DATASOURCE_USERNAME
