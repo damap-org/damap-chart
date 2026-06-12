@@ -2,9 +2,6 @@
 
 This Helm chart deploys [DAMAP](https://damap.org) on a Kubernetes or OpenShift cluster. Some features, such as auto-creating a custom build from Git, are only supported on OpenShift.
 
-> [!WARNING]
-> This chart is currently marked as a pre-release and targets DAMAP 5.0.0-rc.3. It is intended for evaluation and testing.
-
 ## Pre-requisites
 
 Before deploying:
@@ -25,13 +22,13 @@ This chart is published as an OCI artifact.
 Install:
 
 ```bash
-helm install damap oci://ghcr.io/damap-org/damap-chart --version 0.1.0-rc.4
+helm install damap oci://ghcr.io/damap-org/damap-chart --version 0.1.0
 ```
 
 Upgrade:
 
 ```bash
-helm upgrade damap oci://ghcr.io/damap-org/damap-chart --version 0.1.0-rc.4
+helm upgrade damap oci://ghcr.io/damap-org/damap-chart --version 0.1.0
 ```
 
 ## Configuration
@@ -60,13 +57,13 @@ All configuration is managed via `values.yaml`. Below are the main sections you 
 
 | Variable             | Description                                                                                                                                                                                                                                                                                                 | Default                                                                                                                                                                                                                                          |
 | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| backendVersion       | Backend image tag                                                                                                                                                                                                                                                                                           | 5.0.0-rc.3                                                                                                                                                                                                                                       |
+| backendVersion       | Backend image tag                                                                                                                                                                                                                                                                                           | 5.0.0                                                                                                                                                                                                                                            |
 | customDomain         | Use custom domain routing                                                                                                                                                                                                                                                                                   | false                                                                                                                                                                                                                                            |
 | dbName               | Database name                                                                                                                                                                                                                                                                                               | damap                                                                                                                                                                                                                                            |
 | dbPassword           | Database password                                                                                                                                                                                                                                                                                           | damap_pass                                                                                                                                                                                                                                       |
 | dbUser               | Database user                                                                                                                                                                                                                                                                                               | damap                                                                                                                                                                                                                                            |
 | evaluationServiceUrl | DMP evaluation service URL. Leave empty to disable the integration.                                                                                                                                                                                                                                         |                                                                                                                                                                                                                                                  |
-| frontendVersion      | Frontend image tag                                                                                                                                                                                                                                                                                          | 5.0.0-rc.3                                                                                                                                                                                                                                       |
+| frontendVersion      | Frontend image tag                                                                                                                                                                                                                                                                                          | 5.0.0                                                                                                                                                                                                                                            |
 | hostFolder           | Base directory for `hostPath` persistence. Demo and small-scale deployments only.                                                                                                                                                                                                                           | /tmp/damap                                                                                                                                                                                                                                       |
 | hostname             | Public hostname                                                                                                                                                                                                                                                                                             | localhost                                                                                                                                                                                                                                        |
 | ingressClass         | Ingress class name                                                                                                                                                                                                                                                                                          |                                                                                                                                                                                                                                                  |
@@ -78,14 +75,14 @@ All configuration is managed via `values.yaml`. Below are the main sections you 
 | storageSize          | Storage size for the DAMAP database PVC when persistence is enabled                                                                                                                                                                                                                                         | 5Gi                                                                                                                                                                                                                                              |
 | tlsClusterIssuer     | cert-manager ClusterIssuer for TLS                                                                                                                                                                                                                                                                          |                                                                                                                                                                                                                                                  |
 | useExistingSecret    | Use pre-created Kubernetes Secret instead of generating one                                                                                                                                                                                                                                                 | false                                                                                                                                                                                                                                            |
-| useHostFolder        | Use `hostPath` storage from `hostFolder` when persistence is enabled. Demo and small-scale deployments only.                                                                                                                                                                                                 | true                                                                                                                                                                                                                                             |
+| useHostFolder        | Use `hostPath` storage from `hostFolder` when persistence is enabled. Demo and small-scale deployments only.                                                                                                                                                                                                | true                                                                                                                                                                                                                                             |
 
 #### DAMAP Multitenancy (`damap.multitenancy`)
 
-| Key                 | Description                                                                                      | Default                    |
-| ------------------- | ------------------------------------------------------------------------------------------------ | -------------------------- |
-| autoCreateDatabases | Automatically create databases for tenants                                                       | false                      |
-| enabled             | Enable multi-tenant mode                                                                         | false                      |
+| Key                 | Description                                                                                       | Default                    |
+| ------------------- | ------------------------------------------------------------------------------------------------- | -------------------------- |
+| autoCreateDatabases | Automatically create databases for tenants                                                        | false                      |
+| enabled             | Enable multi-tenant mode                                                                          | false                      |
 | tenants             | Map of tenant IDs to tenant-specific DAMAP configuration. The tenant ID is used as database name. | See `values.yaml` example. |
 
 Example tenant configuration:
@@ -111,9 +108,9 @@ damap:
 
 #### Frontend Customization (`frontend`)
 
-| Variable    | Description                                                                                   | Default |
-| ----------- | --------------------------------------------------------------------------------------------- | ------- |
-| customize   | Set to true to enable a custom logo                                                           | false   |
+| Variable    | Description                                                                                    | Default |
+| ----------- | ---------------------------------------------------------------------------------------------- | ------- |
+| customize   | Set to true to enable a custom logo                                                            | false   |
 | logo        | Base64-encoded SVG for the main logo. Combined with `logoCropped`, total must not exceed 1 MB. |         |
 | logoCropped | Base64-encoded SVG for the cropped logo. Combined with `logo`, total must not exceed 1 MB.     |         |
 
@@ -242,8 +239,8 @@ helm install --values values.yaml <RELEASE_NAME> ./  # Install the chart.
 
 ## Versioning Strategy
 
-Chart version tracks Helm lifecycle (e.g. `0.1.0-rc.1`)
+Chart version tracks Helm lifecycle (e.g. `0.1.0`)
 
-appVersion tracks DAMAP version (e.g. `5.0.0-rc.1`)
+appVersion tracks DAMAP version (e.g. `5.0.0`)
 
 Prereleases are explicitly marked in [Artifact Hub](https://artifacthub.io/).

@@ -3,8 +3,8 @@ name: damap-chart
 description: A tool to create machine-actionable data management plans.
 type: application
 
-version: 0.1.0-rc.4
-appVersion: "5.0.0-rc.3"
+version: 0.1.0
+appVersion: "5.0.0"
 
 kubeVersion: ">=1.25.0"
 
@@ -30,7 +30,9 @@ maintainers:
 icon: https://damap.org/logo.svg
 
 annotations:
-  artifacthub.io/prerelease: "true"
   artifacthub.io/changes: |
-    - kind: fixed
-      description: Fix DAMAP invalid JDBC URL generation by setting the database host and port explicitly
+    - kind: added
+      description: Initial stable public release of the DAMAP Helm chart
+
+    - kind: changed
+      description: Bump DAMAP backend and frontend to 5.0.0
