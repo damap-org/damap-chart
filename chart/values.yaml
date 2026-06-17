@@ -97,6 +97,11 @@ frontend:
   logo: ""
   logoCropped: ""
 
+postgres:
+  deploy: true
+  host: damap-db
+  port: 5432
+
 keycloak:
   # Defaults to auto-generated, check the keycloak secret for the password after deployment.
   adminPassword: ""

@@ -12,7 +12,7 @@
 {{- range $tenants }}
 {{- $_ := set $datasources . (dict
   "jdbc" (dict
-    "url" (printf "jdbc:postgresql://damap-db:5432/%s" .)
+    "url" (printf "jdbc:postgresql://%s:%v/%s" $.Values.postgres.host $.Values.postgres.port .)
     "driver" "org.postgresql.Driver"
   )
   "db-kind" "postgresql"
