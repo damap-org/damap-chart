@@ -32,6 +32,14 @@ damap:
   ingressClass: ""
   multitenancy:
     autoCreateDatabases: false
+    initContainer:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 128Mi
+        limits:
+          cpu: 250m
+          memory: 512Mi
     enabled: false
     tenants:
       tenant_1:
@@ -84,6 +92,13 @@ damap:
       class-name: "org.damap.base.integration.orcid.ORCIDPersonServiceImpl"
   projectService: elsevier-pure
   protocol: http
+  resources:
+    requests:
+      cpu: 100m
+      memory: 1Gi
+    limits:
+      cpu: 500m
+      memory: 2Gi
   storageClassName: ""
   storageSize: 5Gi
   tlsClusterIssuer: ""
@@ -96,17 +111,48 @@ frontend:
   customize: false
   logo: ""
   logoCropped: ""
+  resources:
+    requests:
+      cpu: 10m
+      memory: 512Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+
+gotenberg:
+  resources:
+    requests:
+      cpu: 10m
+      memory: 512Mi
+    limits:
+      cpu: 250m
+      memory: 1Gi
 
 postgres:
   deploy: true
   host: damap-db
   port: 5432
+  resources:
+    requests:
+      cpu: 10m
+      memory: 512Mi
+    limits:
+      cpu: 250m
+      memory: 2Gi
 
 keycloak:
   # Defaults to auto-generated, check the keycloak secret for the password after deployment.
   adminPassword: ""
   adminUser: admin
   customDomain: false
+  database:
+    resources:
+      requests:
+        cpu: 10m
+        memory: 512Mi
+      limits:
+        cpu: 250m
+        memory: 2Gi
   dbName: keycloak
   dbPassword: "keycloak123" # Empty defaults to auto-generate
   dbUser: keycloak
@@ -119,6 +165,13 @@ keycloak:
   ingressClass: ""
   persistData: false
   protocol: http
+  resources:
+    requests:
+      cpu: 100m
+      memory: 512Mi
+    limits:
+      cpu: 500m
+      memory: 2Gi
   storageClassName: ""
   storageSize: 5Gi
   tlsClusterIssuer: ""

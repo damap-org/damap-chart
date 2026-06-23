@@ -86,12 +86,7 @@ spec:
         - name: multitenant-db-check
           image: postgres:16
           resources:
-            requests:
-              cpu: 10m
-              memory: 256Mi
-            limits:
-              cpu: "0.25"
-              memory: 512Mi
+            {{- toYaml .Values.damap.multitenancy.initContainer.resources | nindent 12 }}
           securityContext:
             {{- if not .Values.openshift }}
             runAsUser: 999
@@ -146,12 +141,7 @@ spec:
           {{- end }}
 
           resources:
-            requests:
-              cpu: 10m
-              memory: 2G
-            limits:
-              cpu: "0.25"
-              memory: 2G
+            {{- toYaml .Values.damap.resources | nindent 12 }}
           ports:
             - containerPort: 9000
           env:
@@ -367,12 +357,7 @@ spec:
                 - "ALL"
           image: gotenberg/gotenberg:8
           resources:
-            requests:
-              cpu: 10m
-              memory: 512Mi
-            limits:
-              memory: 2G
-              cpu: "0.25"
+            {{- toYaml .Values.gotenberg.resources | nindent 12 }}
 ---
 apiVersion: v1
 kind: Service
@@ -437,12 +422,7 @@ spec:
               readOnly: true
           {{- end }}
           resources:
-            requests:
-              cpu: 10m
-              memory: 512Mi
-            limits:
-              memory: 512Mi
-              cpu: "0.5"
+            {{- toYaml .Values.frontend.resources | nindent 12 }}
           ports:
             - containerPort: 8080
           livenessProbe:
@@ -512,12 +492,7 @@ spec:
         - name: damap-db
           image: postgres:16
           resources:
-            requests:
-              cpu: 10m
-              memory: 512Mi
-            limits:
-              memory: 2G
-              cpu: "0.25"
+            {{- toYaml .Values.postgres.resources | nindent 12 }}
           {{- if .Values.damap.persistData }}
           volumeMounts:
             - name: damap-db

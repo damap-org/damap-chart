@@ -78,12 +78,7 @@ spec:
         - name: keycloak
           image: quay.io/keycloak/keycloak:26.3
           resources:
-            requests:
-              cpu: 10m
-              memory: 512Mi
-            limits:
-              cpu: "0.5"
-              memory: 2G
+            {{- toYaml .Values.keycloak.resources | nindent 12 }}
           args:
             - start
             - --http-enabled=true
@@ -209,12 +204,7 @@ spec:
         - name: keycloak-db
           image: postgres:16
           resources:
-            requests:
-              cpu: 10m
-              memory: 512Mi
-            limits:
-              memory: 2G
-              cpu: "0.25"
+            {{- toYaml .Values.keycloak.database.resources | nindent 12 }}
           {{- if .Values.keycloak.persistData }}
           volumeMounts:
             - name: keycloak-db
