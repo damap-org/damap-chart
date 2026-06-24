@@ -3,7 +3,7 @@ name: damap-chart
 description: A tool to create machine-actionable data management plans.
 type: application
 
-version: 0.1.0
+version: 0.2.0
 appVersion: "5.0.0"
 
 kubeVersion: ">=1.25.0"
@@ -32,7 +32,6 @@ icon: https://damap.org/logo.svg
 annotations:
   artifacthub.io/changes: |
     - kind: added
-      description: Initial stable public release of the DAMAP Helm chart
-
-    - kind: changed
-      description: Bump DAMAP backend and frontend to 5.0.0
+      description: Add support for external PostgreSQL configuration for DAMAP
+    - kind: added
+      description: Add configurable resource requests and limits for containers
