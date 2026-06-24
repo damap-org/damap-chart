@@ -184,6 +184,44 @@
               "type": "boolean",
               "default": false
             },
+            "initContainer": {
+              "title": "Init container",
+              "description": "Configuration for the multitenancy database init container.",
+              "type": "object",
+              "properties": {
+                "resources": {
+                  "title": "Resources",
+                  "description": "Resource requests and limits for the multitenancy init container.",
+                  "type": "object",
+                  "properties": {
+                    "requests": {
+                      "title": "Requests",
+                      "type": "object",
+                      "properties": {
+                        "cpu": {
+                          "type": "string"
+                        },
+                        "memory": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "limits": {
+                      "title": "Limits",
+                      "type": "object",
+                      "properties": {
+                        "cpu": {
+                          "type": "string"
+                        },
+                        "memory": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
             "tenants": {
               "title": "Tenants",
               "description": "Map of tenant identifiers to tenant-specific DAMAP configuration. Each tenant key is also used as the database name.",
@@ -316,6 +354,37 @@
             "https"
           ]
         },
+        "resources": {
+          "title": "Resources",
+          "description": "Resource requests and limits for the DAMAP backend container.",
+          "type": "object",
+          "properties": {
+            "requests": {
+              "title": "Requests",
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "type": "string"
+                },
+                "memory": {
+                  "type": "string"
+                }
+              }
+            },
+            "limits": {
+              "title": "Limits",
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "type": "string"
+                },
+                "memory": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
         "storageClassName": {
           "title": "Storage class name",
           "description": "Name for the storage class to use for allocating PVs.",
@@ -377,6 +446,131 @@
           "format": "binary",
           "contentEncoding": "base64",
           "default": ""
+        },
+        "resources": {
+          "title": "Resources",
+          "description": "Resource requests and limits for the DAMAP frontend container.",
+          "type": "object",
+          "properties": {
+            "requests": {
+              "title": "Requests",
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "type": "string"
+                },
+                "memory": {
+                  "type": "string"
+                }
+              }
+            },
+            "limits": {
+              "title": "Limits",
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "type": "string"
+                },
+                "memory": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "gotenberg": {
+      "title": "Gotenberg",
+      "description": "Gotenberg service configuration.",
+      "type": "object",
+      "properties": {
+        "resources": {
+          "title": "Resources",
+          "description": "Resource requests and limits for the Gotenberg service.",
+          "type": "object",
+          "properties": {
+            "requests": {
+              "title": "Requests",
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "type": "string"
+                },
+                "memory": {
+                  "type": "string"
+                }
+              }
+            },
+            "limits": {
+              "title": "Limits",
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "type": "string"
+                },
+                "memory": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "postgres": {
+      "title": "PostgreSQL",
+      "description": "PostgreSQL deployment configuration.",
+      "type": "object",
+      "properties": {
+        "deploy": {
+          "title": "Deploy",
+          "description": "Deploy the bundled PostgreSQL instance.",
+          "type": "boolean",
+          "default": true
+        },
+        "host": {
+          "title": "Host",
+          "description": "Hostname for the PostgreSQL server.",
+          "type": "string",
+          "default": "damap-db"
+        },
+        "port": {
+          "title": "Port",
+          "description": "TCP port for the PostgreSQL server.",
+          "type": "integer",
+          "default": 5432
+        },
+        "resources": {
+          "title": "Resources",
+          "description": "Resource requests and limits for the PostgreSQL server.",
+          "type": "object",
+          "properties": {
+            "requests": {
+              "title": "Requests",
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "type": "string"
+                },
+                "memory": {
+                  "type": "string"
+                }
+              }
+            },
+            "limits": {
+              "title": "Limits",
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "type": "string"
+                },
+                "memory": {
+                  "type": "string"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -432,6 +626,44 @@
           "description": "Co-deploy Keycloak. Not for production use.",
           "type": "boolean"
         },
+        "database": {
+          "title": "Database",
+          "description": "Configuration for the Keycloak database deployment.",
+          "type": "object",
+          "properties": {
+            "resources": {
+              "title": "Resources",
+              "description": "Resource requests and limits for the Keycloak database container.",
+              "type": "object",
+              "properties": {
+                "requests": {
+                  "title": "Requests",
+                  "type": "object",
+                  "properties": {
+                    "cpu": {
+                      "type": "string"
+                    },
+                    "memory": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "limits": {
+                  "title": "Limits",
+                  "type": "object",
+                  "properties": {
+                    "cpu": {
+                      "type": "string"
+                    },
+                    "memory": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
         "hostFolder": {
           "title": "Host folder",
           "description": "Host folder for persistence (only for demo/small scale deployments, not for production)",
@@ -462,6 +694,37 @@
             "http",
             "https"
           ]
+        },
+        "resources": {
+          "title": "Resources",
+          "description": "Resource requests and limits for the Keycloak container.",
+          "type": "object",
+          "properties": {
+            "requests": {
+              "title": "Requests",
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "type": "string"
+                },
+                "memory": {
+                  "type": "string"
+                }
+              }
+            },
+            "limits": {
+              "title": "Limits",
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "type": "string"
+                },
+                "memory": {
+                  "type": "string"
+                }
+              }
+            }
+          }
         },
         "storageClassName": {
           "title": "Storage class name",

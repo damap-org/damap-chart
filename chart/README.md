@@ -55,34 +55,36 @@ All configuration is managed via `values.yaml`. Below are the main sections you 
 
 #### DAMAP Application (`damap`)
 
-| Variable             | Description                                                                                                                                                                                                                                                                                                 | Default                                                                                                                                                                                                                                          |
-| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| backendVersion       | Backend image tag                                                                                                                                                                                                                                                                                           | 5.0.0                                                                                                                                                                                                                                            |
-| customDomain         | Use custom domain routing                                                                                                                                                                                                                                                                                   | false                                                                                                                                                                                                                                            |
-| dbName               | Database name                                                                                                                                                                                                                                                                                               | damap                                                                                                                                                                                                                                            |
-| dbPassword           | Database password                                                                                                                                                                                                                                                                                           | damap_pass                                                                                                                                                                                                                                       |
-| dbUser               | Database user                                                                                                                                                                                                                                                                                               | damap                                                                                                                                                                                                                                            |
-| evaluationServiceUrl | DMP evaluation service URL. Leave empty to disable the integration.                                                                                                                                                                                                                                         |                                                                                                                                                                                                                                                  |
-| frontendVersion      | Frontend image tag                                                                                                                                                                                                                                                                                          | 5.0.0                                                                                                                                                                                                                                            |
-| hostFolder           | Base directory for `hostPath` persistence. Demo and small-scale deployments only.                                                                                                                                                                                                                           | /tmp/damap                                                                                                                                                                                                                                       |
-| hostname             | Public hostname                                                                                                                                                                                                                                                                                             | localhost                                                                                                                                                                                                                                        |
-| ingressClass         | Ingress class name                                                                                                                                                                                                                                                                                          |                                                                                                                                                                                                                                                  |
-| persistData          | Enable persistent storage                                                                                                                                                                                                                                                                                   | false                                                                                                                                                                                                                                            |
-| personServices       | A prioritized list of external services DAMAP will use to resolve and enrich person (researcher) information. Each entry includes: <ul><li>Human-readable name shown in the UI</li><li>Internal identifier for the service.class-name</li><li>Fully qualified Java class implementing the service</li></ul> | - display-text: "Pure"<br> query-value: "PURE"<br> class-name: "org.damap.base.integration.pure.PurePersonService"<br>- display-text: "ORCID"<br> query-value: "ORCID"<br> class-name: "org.damap.base.integration.orcid.ORCIDPersonServiceImpl" |
-| projectService       | Defines the service used to fetch and manage project metadata. This must match a supported integration provider, for example `elsevier-pure`.                                                                                                                                                               | elsevier-pure                                                                                                                                                                                                                                    |
-| protocol             | Protocol to use for accessing DAMAP (`http` or `https`)                                                                                                                                                                                                                                                     | http                                                                                                                                                                                                                                             |
-| storageClassName     | StorageClass for persistent volumes                                                                                                                                                                                                                                                                         |                                                                                                                                                                                                                                                  |
-| storageSize          | Storage size for the DAMAP database PVC when persistence is enabled                                                                                                                                                                                                                                         | 5Gi                                                                                                                                                                                                                                              |
-| tlsClusterIssuer     | cert-manager ClusterIssuer for TLS                                                                                                                                                                                                                                                                          |                                                                                                                                                                                                                                                  |
-| useExistingSecret    | Use pre-created Kubernetes Secret instead of generating one                                                                                                                                                                                                                                                 | false                                                                                                                                                                                                                                            |
-| useHostFolder        | Use `hostPath` storage from `hostFolder` when persistence is enabled. Demo and small-scale deployments only.                                                                                                                                                                                                | true                                                                                                                                                                                                                                             |
+| Variable             | Description                                                                                | Default           |
+| -------------------- | ------------------------------------------------------------------------------------------ | ----------------- |
+| backendVersion       | Backend image tag.                                                                         | 5.0.0             |
+| customDomain         | Use custom domain routing.                                                                 | false             |
+| dbName               | Database name.                                                                             | damap             |
+| dbPassword           | Database password.                                                                         | damap_pass        |
+| dbUser               | Database user.                                                                             | damap             |
+| evaluationServiceUrl | DMP evaluation service URL. Leave empty to disable the integration.                        |                   |
+| frontendVersion      | Frontend image tag.                                                                        | 5.0.0             |
+| hostFolder           | Base directory for `hostPath` persistence. Demo and small-scale deployments only.          | /tmp/damap        |
+| hostname             | Public hostname.                                                                           | localhost         |
+| ingressClass         | Ingress class name.                                                                        |                   |
+| persistData          | Enable persistent storage.                                                                 | false             |
+| personServices       | Prioritized person lookup services used by DAMAP.                                          | See `values.yaml` |
+| projectService       | Service used to fetch and manage project metadata, for example `elsevier-pure`.            | elsevier-pure     |
+| protocol             | Protocol to use for accessing DAMAP (`http` or `https`).                                   | http              |
+| resources            | Resource requests and limits for the DAMAP backend container.                              | See `values.yaml` |
+| storageClassName     | StorageClass for persistent volumes.                                                       |                   |
+| storageSize          | Storage size for the DAMAP database PVC when persistence is enabled.                       | 5Gi               |
+| tlsClusterIssuer     | cert-manager ClusterIssuer for TLS.                                                        |                   |
+| useExistingSecret    | Use pre-created Kubernetes Secret instead of generating one.                               | false             |
+| useHostFolder        | Use `hostPath` storage from `hostFolder` when persistence is enabled. Demo/local use only. | true              |
 
 #### DAMAP Multitenancy (`damap.multitenancy`)
 
 | Key                 | Description                                                                                       | Default                    |
 | ------------------- | ------------------------------------------------------------------------------------------------- | -------------------------- |
-| autoCreateDatabases | Automatically create databases for tenants                                                        | false                      |
-| enabled             | Enable multi-tenant mode                                                                          | false                      |
+| autoCreateDatabases | Automatically create databases for tenants.                                                       | false                      |
+| enabled             | Enable multi-tenant mode.                                                                         | false                      |
+| initContainer       | Resource requests and limits for the multitenancy init container.                                 | See `values.yaml`          |
 | tenants             | Map of tenant IDs to tenant-specific DAMAP configuration. The tenant ID is used as database name. | See `values.yaml` example. |
 
 Example tenant configuration:
@@ -108,36 +110,54 @@ damap:
 
 #### Frontend Customization (`frontend`)
 
-| Variable    | Description                                                                                    | Default |
-| ----------- | ---------------------------------------------------------------------------------------------- | ------- |
-| customize   | Set to true to enable a custom logo                                                            | false   |
-| logo        | Base64-encoded SVG for the main logo. Combined with `logoCropped`, total must not exceed 1 MB. |         |
-| logoCropped | Base64-encoded SVG for the cropped logo. Combined with `logo`, total must not exceed 1 MB.     |         |
+| Variable    | Description                                                                                    | Default           |
+| ----------- | ---------------------------------------------------------------------------------------------- | ----------------- |
+| customize   | Set to true to enable a custom logo.                                                           | false             |
+| logo        | Base64-encoded SVG for the main logo. Combined with `logoCropped`, total must not exceed 1 MB. |                   |
+| logoCropped | Base64-encoded SVG for the cropped logo. Combined with `logo`, total must not exceed 1 MB.     |                   |
+| resources   | Resource requests and limits for the DAMAP frontend container.                                 | See `values.yaml` |
+
+#### Gotenberg (`gotenberg`)
+
+| Variable  | Description                                             | Default           |
+| --------- | ------------------------------------------------------- | ----------------- |
+| resources | Resource requests and limits for the Gotenberg service. | See `values.yaml` |
+
+#### PostgreSQL (`postgres`)
+
+| Variable  | Description                                                                 | Default           |
+| --------- | --------------------------------------------------------------------------- | ----------------- |
+| deploy    | Deploy the bundled PostgreSQL instance. Set to false for external database. | true              |
+| host      | Hostname for the PostgreSQL server used by DAMAP.                           | damap-db          |
+| port      | TCP port for the PostgreSQL server used by DAMAP.                           | 5432              |
+| resources | Resource requests and limits for the bundled PostgreSQL container.          | See `values.yaml` |
 
 #### OIDC Server (`keycloak`)
 
 > [!TIP]
 > Set `keycloak.deploy=false` to use an external OIDC provider.
 
-| Key               | Description                                                 | Default       |
-| ----------------- | ----------------------------------------------------------- | ------------- |
-| adminPassword     | Admin password (auto-generated if empty)                    |               |
-| adminUser         | Username of the Keycloak administrator                      | admin         |
-| customDomain      | Use custom domain routing                                   | false         |
-| dbName            | Keycloak database name                                      | keycloak      |
-| dbPassword        | DB password (auto-generated if empty)                       | keycloak123   |
-| dbUser            | Keycloak DB user                                            | keycloak      |
-| deploy            | Deploy bundled Keycloak instance                            | true          |
-| hostFolder        | Base directory for hostPath (demo only)                     | /tmp/keycloak |
-| hostname          | Public hostname                                             | localhost     |
-| ingressClass      | Ingress class name                                          |               |
-| persistData       | Enable persistent storage                                   | false         |
-| protocol          | Protocol to use for accessing Keycloak (`http` or `https`)  | http          |
-| storageClassName  | StorageClass for persistent volumes                         |               |
-| storageSize       | Storage size for the Keycloak database PVC                  | 5Gi           |
-| tlsClusterIssuer  | cert-manager ClusterIssuer for TLS                          |               |
-| useExistingSecret | Use pre-created Kubernetes Secret instead of generating one | false         |
-| useHostFolder     | Use `hostPath` storage from `hostFolder` when enabled       | true          |
+| Key                | Description                                                        | Default           |
+| ------------------ | ------------------------------------------------------------------ | ----------------- |
+| adminPassword      | Admin password. Auto-generated if empty.                           |                   |
+| adminUser          | Username of the Keycloak administrator.                            | admin             |
+| customDomain       | Use custom domain routing.                                         | false             |
+| database.resources | Resource requests and limits for the Keycloak database container.  | See `values.yaml` |
+| dbName             | Keycloak database name.                                            | keycloak          |
+| dbPassword         | Database password. Auto-generated if empty.                        | keycloak123       |
+| dbUser             | Keycloak database user.                                            | keycloak          |
+| deploy             | Deploy bundled Keycloak instance.                                  | true              |
+| hostFolder         | Base directory for `hostPath` persistence. Demo/local use only.    | /tmp/keycloak     |
+| hostname           | Public hostname.                                                   | localhost         |
+| ingressClass       | Ingress class name.                                                |                   |
+| persistData        | Enable persistent storage.                                         | false             |
+| protocol           | Protocol to use for accessing Keycloak (`http` or `https`).        | http              |
+| resources          | Resource requests and limits for the Keycloak container.           | See `values.yaml` |
+| storageClassName   | StorageClass for persistent volumes.                               |                   |
+| storageSize        | Storage size for the Keycloak database PVC.                        | 5Gi               |
+| tlsClusterIssuer   | cert-manager ClusterIssuer for TLS.                                |                   |
+| useExistingSecret  | Use pre-created Kubernetes Secret instead of generating one.       | false             |
+| useHostFolder      | Use `hostPath` storage from `hostFolder` when persistence enabled. | true              |
 
 #### Authentication (`oidc`)
 
@@ -158,17 +178,17 @@ damap:
 
 #### Elsevier Pure Integration (`pure`)
 
-| Key                       | Description                                                                                                                                                                                                                                                                                                                                                                                                                                | Default                            |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------- |
-| apiKey                    | API key for authentication                                                                                                                                                                                                                                                                                                                                                                                                                 | ...                                |
-| backend                   | `file` (mock) or `http` (real API)                                                                                                                                                                                                                                                                                                                                                                                                         | file                               |
-| descriptionClassification | Classification URI for project descriptions                                                                                                                                                                                                                                                                                                                                                                                                | /dk/atira/pure/...                 |
-| enabled                   | Enable integration with Elsevier Pure                                                                                                                                                                                                                                                                                                                                                                                                      | true                               |
-| endpoint                  | The API endpoint to use. This should be the base URL, e.g., "https://your-pure-instance.com/api".                                                                                                                                                                                                                                                                                                                                          | https://...                        |
-| personsData               | Mock persons data. Used when backend is `file`.                                                                                                                                                                                                                                                                                                                                                                                            | See `values.yaml`                  |
-| projectLeadClassification | Classification URI for project lead role                                                                                                                                                                                                                                                                                                                                                                                                   | /dk/atira/pure/...                 |
-| projectsData              | Mock projects data. Used when backend is `file`.                                                                                                                                                                                                                                                                                                                                                                                           | See `values.yaml`                  |
-| roleClassifications       | Map Pure classification URIs to DAMAP role constants. Supported DAMAP roles include: DATA_COLLECTOR, DATA_CURATOR, DATA_MANAGER, DISTRIBUTOR, EDITOR, HOSTING_INSTITUTION, PRODUCER, PROJECT_LEADER, PROJECT_MANAGER, PROJECT_MEMBER, REGISTRATION_AGENCY, REGISTRATION_AUTHORITY, RELATED_PERSON, RESEARCHER, RESEARCH_GROUP, RIGHTS_HOLDER, SPONSOR, SUPERVISOR, WORK_PACKAGE_LEADER, PRINCIPAL_INVESTIGATOR, PROJECT_COORDINATOR, OTHER | /dk/atira/pure/...: PROJECT_MEMBER |
+| Key                       | Description                                              | Default                            |
+| ------------------------- | -------------------------------------------------------- | ---------------------------------- |
+| apiKey                    | API key for authentication.                              | ...                                |
+| backend                   | `file` for mock data or `http` for the real API.         | file                               |
+| descriptionClassification | Classification URI for project descriptions.             | /dk/atira/pure/...                 |
+| enabled                   | Enable integration with Elsevier Pure.                   | true                               |
+| endpoint                  | Base URL for the Pure API.                               | https://...                        |
+| personsData               | Mock persons data. Used when backend is `file`.          | See `values.yaml`                  |
+| projectLeadClassification | Classification URI for project lead role.                | /dk/atira/pure/...                 |
+| projectsData              | Mock projects data. Used when backend is `file`.         | See `values.yaml`                  |
+| roleClassifications       | Map Pure classification URIs to DAMAP contributor roles. | /dk/atira/pure/...: PROJECT_MEMBER |
 
 ## Secrets
 
