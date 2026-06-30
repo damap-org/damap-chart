@@ -1,0 +1,9 @@
+repositoryID: "b1709636-98f6-4ba5-94b0-0118e07ed4bd"
+
+owners:
+  - name: DAMAP Team
+    email: info@damap.org
+
+ignore:
+  - name: damap-chart
+    version: "dev"
