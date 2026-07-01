@@ -3,8 +3,8 @@ name: damap-chart
 description: A tool to create machine-actionable data management plans.
 type: application
 
-version: 0.2.0
-appVersion: "5.0.0"
+version: 0.2.1-dev.1
+appVersion: "5.0.1"
 
 kubeVersion: ">=1.25.0"
 
@@ -30,8 +30,6 @@ maintainers:
 icon: https://damap.org/logo.svg
 
 annotations:
+  artifacthub.io/prerelease: "true"
   artifacthub.io/changes: |
-    - kind: added
-      description: Add support for external PostgreSQL configuration for DAMAP
-    - kind: added
-      description: Add configurable resource requests and limits for containers
+    - Dev release 1 for the chart version 0.2.1
