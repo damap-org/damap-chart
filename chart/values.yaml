@@ -24,7 +24,7 @@ damap:
   dbPassword: "damap_pass" # Empty defaults to auto-generate.
   dbUser: damap
   evaluationServiceUrl: "" # DMP evaluation service URL, e.g., "https://dmp-evaluation-service.example.com". Empty string disables the integration.
-  frontendVersion: 5.0.0
+  frontendVersion: 5.0.1
   # Host folder to persist data for demo / small scale deployments.
   # NOTE: Do not use for production!
   hostFolder: /tmp/damap
