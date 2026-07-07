@@ -1,0 +1,57 @@
+{{- if eq .Values.postgres.mode "cnpg" }}
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: {{ .Values.postgres.cnpg.clusterName }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: damap-db
+spec:
+  instances: {{ .Values.postgres.cnpg.instances }}
+  imageName: {{ .Values.postgres.cnpg.image | quote }}
+  resources:
+    {{- toYaml .Values.postgres.resources | nindent 4 }}
+
+  bootstrap:
+    initdb:
+      database: {{ include "databaseName" . | quote }}
+      owner: {{ include "cnpgOwner" . | quote }}
+      secret:
+        name: {{ include "cnpgSecretName" . | quote }}
+
+  storage:
+    size: {{ .Values.postgres.cnpg.storage.size | quote }}
+    {{- if .Values.postgres.cnpg.storage.storageClassName  }}
+    storageClass: {{ .Values.postgres.cnpg.storage.storageClassName | quote }}
+    {{- end }}
+  
+  {{- if .Values.postgres.cnpg.walStorage.enabled }}
+  walStorage:
+    size: {{ .Values.postgres.cnpg.walStorage.size | quote }}
+    {{- if .Values.postgres.cnpg.walStorage.storageClassName }}
+    storageClass: {{ .Values.postgres.cnpg.walStorage.storageClassName | quote }}
+    {{- end }}
+  {{- end }}
+
+  {{- if .Values.postgres.cnpg.backup.enabled }}
+  backup:
+    retentionPolicy: {{ .Values.postgres.cnpg.backup.retentionPolicy | quote }}
+    barmanObjectStore:
+      destinationPath: {{ required "postgres.cnpg.backup.destinationPath is required when CNPG backups are enabled" .Values.postgres.cnpg.backup.destinationPath | quote }}
+      endpointURL: {{ required "postgres.cnpg.backup.endpointURL is required when CNPG backups are enabled" .Values.postgres.cnpg.backup.endpointURL | quote }}
+      {{- if .Values.postgres.cnpg.backup.serverName }}
+      serverName: {{ .Values.postgres.cnpg.backup.serverName | quote }}
+      {{- end }}
+      s3Credentials:
+        accessKeyId:
+          name: {{ required "postgres.cnpg.backup.bucketSecretName is required when CNPG backups are enabled" .Values.postgres.cnpg.backup.bucketSecretName }}
+          key: {{ .Values.postgres.cnpg.backup.accessKeyIdKey }}
+        secretAccessKey:
+          name: {{ required "postgres.cnpg.backup.bucketSecretName is required when CNPG backups are enabled" .Values.postgres.cnpg.backup.bucketSecretName }}
+          key: {{ .Values.postgres.cnpg.backup.secretAccessKeyKey }}
+      wal:
+        compression: gzip
+      data:
+        compression: gzip
+  {{- end }}
+{{- end }}
