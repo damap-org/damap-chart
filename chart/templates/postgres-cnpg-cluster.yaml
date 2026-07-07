@@ -1,0 +1,51 @@
+{{- if and .Values.postgres.cnpg.enabled (eq .Values.postgres.mode "cnpg") }}
+apiVersion: postresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: {{ .Values.postgres.cnpg.clusterName }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: damap-db
+  spec:
+    instances: {{ .Values.postgres.cnpg.instances }}
+    imageName: {{ .Values.postgres.cnpg.image }}
+    bootstrap:
+      initdb:
+        database: {{ .Values.damap.dbName }}
+        owner: {{ .Values.damap.dbUser }}
+        secret:
+          name: damap
+
+    storage:
+      size: {{ .Values.postgres.cnpg.storage.size }}
+      {{- if .Values.postgres.cnpg.storage.storageClassName }}
+      storageClass: {{ .Values.postgres.cnpg.storage.storageClassName | quote }}
+      {{- end }}
+    
+    {{- if .Values.postgres.cnpg.walStorage.enabled }}
+    walStorage:
+      size: {{ .Values.postgres.cnpg.walStorage.size | quote }}
+      {{- if .Values.postgres.cnpg.walStorage.storageClassName }}
+      storageClass: {{ .Values.postgres.cnpg.walStorage.storageClassName | quote }}
+      {{- end }}
+    {{- end }}
+
+    {{- if .Values.postgres.cnpg.backup.enabled }}
+    backup:
+      retentionPolicy: {{ .Values.postgres.cnpg.backup.retentionPolicy }}
+      barmanObjectStore:
+        destinationPath: {{ .Values.postgres.cnpg.backup.barmanObjectStore.destinationPath | quote }}
+        endpointURL: {{ .Values.postgres.cnpg.backup.barmanObjectStore.endpointURL | quote }}
+        s3Credentials:
+          accessKeyId:
+            name: {{ required "postgres.cnpg.backup.existingSecret is required when CNPG backups are enabled" .Values.postgres.cnpg.backup.existingSecret }}
+            key: {{ .Values.postgres.cnpg.backup.accessKeyIdKey }}
+          secretAccessKey:
+            name: {{ required "postgres.cnpg.backup.existingSecret is required when CNPG backups are enabled" .Values.postgres.cnpg.backup.existingSecret }}
+            key: {{ .Values.postgres.cnpg.backup.secretAccessKeyKey }}
+        wal:
+          compression: gzip
+        data:
+          compression: gzip
+    {{- end }}
+{{- end }}

@@ -129,9 +129,39 @@ gotenberg:
       memory: 1Gi
 
 postgres:
+  cnpg:
+    backup:
+      accessKeyIdKey: ""
+      destinationPath: ""
+      enabled: false
+      endpointUrl: ""
+      existingSecret: ""
+      immediate: false
+      retentionPolicy: "30d"
+      secretAccessKey: ""
+      schedule: "0 0 2 * * *" # Every day at 2:00 AM
+      suspend: false
+      target: prefer-standby
+
+    clusterName: damap-db
+    enabled: false
+    image: ghcr.io/cloudnative-pg/postgresql:16
+    instances: 2
+
+    storage:
+      size: 20Gi
+      storageClassName: ""
+
+    walStorage:
+      enabled: false
+      size: 5Gi
+      storageClassName: ""
+
   deploy: true
   host: damap-db
+  mode: simple # simple | external | cnpg
   port: 5432
+
   resources:
     requests:
       cpu: 10m

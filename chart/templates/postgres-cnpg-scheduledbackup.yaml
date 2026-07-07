@@ -1,0 +1,17 @@
+{{- if and .Values.postgres.cnpg.enabled .Values.postgres.cnpg.backup.enabled (eq .Values.postgres.mode "cnpg") }}
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: {{ .Values.postgres.cnpg.clusterName }}-backup
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: damap-db
+spec:
+  schedule: {{ .Values.postgres.cnpg.backup.schedule | quote }}
+  immediate: {{ .Values.postgres.cnpg.backup.immediate }}
+  suspend: {{ .Values.postgres.cnpg.backup.suspend }}
+  backupOwnerReference: self
+  target: {{ .Values.postgres.cnpg.backup.target | quote }}
+  cluster:
+    name: {{ .Values.postgres.cnpg.clusterName }}
+{{- end }}

@@ -1,4 +1,4 @@
-{{- if and .Values.damap.persistData (.Values.postgres.deploy) }}
+{{- if and .Values.damap.persistData (.Values.postgres.deploy) (eq .Values.postgres.mode "simple") }}
 {{- if and .Values.damap.useHostFolder (not .Values.openshift) }}
 ---
 apiVersion: v1
@@ -455,7 +455,7 @@ spec:
       port: 8080
       targetPort: 8080
 ---
-{{- if .Values.postgres.deploy }}
+{{- if and .Values.postgres.deploy (eq .Values.postgres.mode "simple") }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
