@@ -3,7 +3,7 @@ name: damap-chart
 description: A tool to create machine-actionable data management plans.
 type: application
 
-version: 0.2.1
+version: 0.3.0-dev.1
 appVersion: "5.0.1"
 
 kubeVersion: ">=1.25.0"
@@ -31,11 +31,6 @@ maintainers:
 icon: https://damap.org/logo.svg
 
 annotations:
+  artifacthub.io/prerelease: "true"
   artifacthub.io/changes: |
-    - kind: changed
-      description: Bump DAMAP frontend to 5.0.1
-    - kind: changed
-      description: Bump Keycloak to 26.4
-
-    - kind: fixed
-      description: Prevent PostgreSQL collation version mismatches for newly created databases
+    - Dev release 1 for the chart version 0.3.0
