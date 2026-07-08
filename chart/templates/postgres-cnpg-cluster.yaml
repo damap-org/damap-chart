@@ -34,15 +34,15 @@ metadata:
     backup:
       retentionPolicy: {{ .Values.postgres.cnpg.backup.retentionPolicy }}
       barmanObjectStore:
-        destinationPath: {{ .Values.postgres.cnpg.backup.barmanObjectStore.destinationPath | quote }}
-        endpointURL: {{ .Values.postgres.cnpg.backup.barmanObjectStore.endpointURL | quote }}
+        destinationPath: {{ .Values.postgres.cnpg.backup.destinationPath | quote }}
+        endpointURL: {{ .Values.postgres.cnpg.backup.endpointUrl | quote }}
         s3Credentials:
           accessKeyId:
             name: {{ required "postgres.cnpg.backup.existingSecret is required when CNPG backups are enabled" .Values.postgres.cnpg.backup.existingSecret }}
-            key: {{ .Values.postgres.cnpg.backup.accessKeyIdKey }}
+            key: {{ .Values.postgres.cnpg.backup.accessKeyId }}
           secretAccessKey:
             name: {{ required "postgres.cnpg.backup.existingSecret is required when CNPG backups are enabled" .Values.postgres.cnpg.backup.existingSecret }}
-            key: {{ .Values.postgres.cnpg.backup.secretAccessKeyKey }}
+            key: {{ .Values.postgres.cnpg.backup.secretAccessKey }}
         wal:
           compression: gzip
         data:

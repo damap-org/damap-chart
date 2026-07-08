@@ -131,7 +131,7 @@ gotenberg:
 postgres:
   cnpg:
     backup:
-      accessKeyIdKey: ""
+      accessKeyId: ""
       destinationPath: ""
       enabled: false
       endpointUrl: ""
