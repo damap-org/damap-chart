@@ -131,14 +131,14 @@ gotenberg:
 postgres:
   cnpg:
     backup:
-      accessKeyId: ""
+      accessKeyIdKey: ""
       destinationPath: ""
       enabled: false
       endpointUrl: ""
       existingSecret: ""
       immediate: false
       retentionPolicy: "30d"
-      secretAccessKey: ""
+      secretAccessKeyKey: ""
       schedule: "0 0 2 * * *" # Every day at 2:00 AM
       suspend: false
       target: prefer-standby

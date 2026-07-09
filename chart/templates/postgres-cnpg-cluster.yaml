@@ -1,51 +1,51 @@
 {{- if and .Values.postgres.cnpg.enabled (eq .Values.postgres.mode "cnpg") }}
-apiVersion: postresql.cnpg.io/v1
+apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
   name: {{ .Values.postgres.cnpg.clusterName }}
   namespace: {{ .Release.Namespace }}
   labels:
     app: damap-db
-  spec:
-    instances: {{ .Values.postgres.cnpg.instances }}
-    imageName: {{ .Values.postgres.cnpg.image }}
-    bootstrap:
-      initdb:
-        database: {{ .Values.damap.dbName }}
-        owner: {{ .Values.damap.dbUser }}
-        secret:
-          name: damap
+spec:
+  instances: {{ .Values.postgres.cnpg.instances }}
+  imageName: {{ .Values.postgres.cnpg.image | quote }}
+  bootstrap:
+    initdb:
+      database: {{ .Values.damap.dbName | quote }}
+      owner: {{ .Values.damap.dbUser | quote }}
+      secret:
+        name: damap
 
-    storage:
-      size: {{ .Values.postgres.cnpg.storage.size }}
-      {{- if .Values.postgres.cnpg.storage.storageClassName }}
-      storageClass: {{ .Values.postgres.cnpg.storage.storageClassName | quote }}
-      {{- end }}
-    
-    {{- if .Values.postgres.cnpg.walStorage.enabled }}
-    walStorage:
-      size: {{ .Values.postgres.cnpg.walStorage.size | quote }}
-      {{- if .Values.postgres.cnpg.walStorage.storageClassName }}
-      storageClass: {{ .Values.postgres.cnpg.walStorage.storageClassName | quote }}
-      {{- end }}
+  storage:
+    size: {{ .Values.postgres.cnpg.storage.size }}
+    {{- if .Values.postgres.cnpg.storage.storageClassName }}
+    storageClass: {{ .Values.postgres.cnpg.storage.storageClassName | quote }}
     {{- end }}
+  
+  {{- if .Values.postgres.cnpg.walStorage.enabled }}
+  walStorage:
+    size: {{ .Values.postgres.cnpg.walStorage.size | quote }}
+    {{- if .Values.postgres.cnpg.walStorage.storageClassName }}
+    storageClass: {{ .Values.postgres.cnpg.walStorage.storageClassName | quote }}
+    {{- end }}
+  {{- end }}
 
-    {{- if .Values.postgres.cnpg.backup.enabled }}
-    backup:
-      retentionPolicy: {{ .Values.postgres.cnpg.backup.retentionPolicy }}
-      barmanObjectStore:
-        destinationPath: {{ .Values.postgres.cnpg.backup.destinationPath | quote }}
-        endpointURL: {{ .Values.postgres.cnpg.backup.endpointUrl | quote }}
-        s3Credentials:
-          accessKeyId:
-            name: {{ required "postgres.cnpg.backup.existingSecret is required when CNPG backups are enabled" .Values.postgres.cnpg.backup.existingSecret }}
-            key: {{ .Values.postgres.cnpg.backup.accessKeyId }}
-          secretAccessKey:
-            name: {{ required "postgres.cnpg.backup.existingSecret is required when CNPG backups are enabled" .Values.postgres.cnpg.backup.existingSecret }}
-            key: {{ .Values.postgres.cnpg.backup.secretAccessKey }}
-        wal:
-          compression: gzip
-        data:
-          compression: gzip
-    {{- end }}
+  {{- if .Values.postgres.cnpg.backup.enabled }}
+  backup:
+    retentionPolicy: {{ .Values.postgres.cnpg.backup.retentionPolicy | quote }}
+    barmanObjectStore:
+      destinationPath: {{ required "postgres.cnpg.backup.destinationPath is required when CNPG backups are enabled" .Values.postgres.cnpg.backup.destinationPath | quote }}
+      endpointURL: {{ required "postgres.cnpg.backup.endpointUrl is required when CNPG backups are enabled" .Values.postgres.cnpg.backup.endpointUrl | quote }}
+      s3Credentials:
+        accessKeyId:
+          name: {{ required "postgres.cnpg.backup.existingSecret is required when CNPG backups are enabled" .Values.postgres.cnpg.backup.existingSecret }}
+          key: {{ .Values.postgres.cnpg.backup.accessKeyIdKey }}
+        secretAccessKey:
+          name: {{ required "postgres.cnpg.backup.existingSecret is required when CNPG backups are enabled" .Values.postgres.cnpg.backup.existingSecret }}
+          key: {{ .Values.postgres.cnpg.backup.secretAccessKeyKey }}
+      wal:
+        compression: gzip
+      data:
+        compression: gzip
+  {{- end }}
 {{- end }}
