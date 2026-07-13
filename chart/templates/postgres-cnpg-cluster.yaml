@@ -14,7 +14,7 @@ spec:
       database: {{ .Values.damap.dbName | quote }}
       owner: {{ .Values.damap.dbUser | quote }}
       secret:
-        name: damap
+        name: {{ .Values.postgres.cnpg.applicationSecret | quote }}
 
   storage:
     size: {{ .Values.postgres.cnpg.storage.size }}
@@ -35,7 +35,7 @@ spec:
     retentionPolicy: {{ .Values.postgres.cnpg.backup.retentionPolicy | quote }}
     barmanObjectStore:
       destinationPath: {{ required "postgres.cnpg.backup.destinationPath is required when CNPG backups are enabled" .Values.postgres.cnpg.backup.destinationPath | quote }}
-      endpointURL: {{ required "postgres.cnpg.backup.endpointUrl is required when CNPG backups are enabled" .Values.postgres.cnpg.backup.endpointUrl | quote }}
+      endpointURL: {{ required "postgres.cnpg.backup.endpointURL is required when CNPG backups are enabled" .Values.postgres.cnpg.backup.endpointURL | quote }}
       s3Credentials:
         accessKeyId:
           name: {{ required "postgres.cnpg.backup.existingSecret is required when CNPG backups are enabled" .Values.postgres.cnpg.backup.existingSecret }}

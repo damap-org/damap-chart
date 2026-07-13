@@ -130,11 +130,13 @@ gotenberg:
 
 postgres:
   cnpg:
+    applicationSecret: damap-cnpg-app # added for testing purposes, the mechanism will be reworked if stable
+
     backup:
       accessKeyIdKey: ""
       destinationPath: ""
       enabled: false
-      endpointUrl: ""
+      endpointURL: ""
       existingSecret: ""
       immediate: false
       retentionPolicy: "30d"
