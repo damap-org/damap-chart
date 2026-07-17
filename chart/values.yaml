@@ -150,6 +150,14 @@ postgres:
     image: ghcr.io/cloudnative-pg/postgresql:16
     instances: 2
 
+    resources:
+      requests:
+        cpu: 10m
+        memory: 512Mi
+      limits:
+        cpu: 250m
+        memory: 2Gi
+
     storage:
       size: 20Gi
       storageClassName: ""
