@@ -1,4 +1,4 @@
-{{- if and .Values.postgres.cnpg.enabled (eq .Values.postgres.mode "cnpg") }}
+{{- if eq .Values.postgres.mode "cnpg" }}
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
@@ -10,14 +10,14 @@ spec:
   instances: {{ .Values.postgres.cnpg.instances }}
   imageName: {{ .Values.postgres.cnpg.image | quote }}
   resources:
-    {{- toYaml .Values.postgres.cnpg.resources | nindent 4 }}
+    {{- toYaml .Values.postgres.resources | nindent 4 }}
 
   bootstrap:
     initdb:
       database: {{ .Values.damap.dbName | quote }}
       owner: {{ .Values.damap.dbUser | quote }}
       secret:
-        name: {{ .Values.postgres.cnpg.applicationSecret | quote }}
+        name: {{ include "cnpgSecretName" . | quote }}
 
   storage:
     size: {{ .Values.postgres.cnpg.storage.size | quote }}

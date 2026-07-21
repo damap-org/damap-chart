@@ -1,4 +1,4 @@
-{{- if and .Values.damap.persistData (.Values.postgres.deploy) (eq .Values.postgres.mode "simple") }}
+{{- if and .Values.damap.persistData (eq .Values.postgres.mode "simple") }}
 {{- if and .Values.damap.useHostFolder (not .Values.openshift) }}
 ---
 apiVersion: v1
@@ -81,7 +81,11 @@ spec:
             secretName: damap-pure
         {{- end }}
 
-      {{- if and .Values.damap.multitenancy.enabled .Values.damap.multitenancy.autoCreateDatabases }}
+      {{- if and
+        .Values.damap.multitenancy.enabled
+        .Values.damap.multitenancy.autoCreateDatabases
+        (ne .Values.postgres.mode "cnpg")
+      }}
       initContainers:
         - name: multitenant-db-check
           image: postgres:16
@@ -98,36 +102,64 @@ spec:
                 secretKeyRef:
                   name: damap
                   key: dbPassword
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: damap
+                  key: dbUsername
           command:
             - sh
             - -c
             - |
-              set -e
+              set -eu
+
               echo "Waiting for PostgreSQL to become available..."
               MAX_RETRIES=60
               RETRY_INTERVAL=2
               ATTEMPT=1
-              until psql -h {{ .Values.postgres.host }} -p {{ .Values.postgres.port }} -U {{ .Values.damap.dbUser }} -d postgres -c '\q'; do
+
+              until psql \
+                -h {{ include "postgresHost" . }} \
+                -p {{ .Values.postgres.port }} \
+                -d postgres \
+                -c '\q'; do
+
                 if [ $ATTEMPT -ge $MAX_RETRIES ]; then
                   echo "ERROR: PostgreSQL did not become ready in time."
                   exit 1
                 fi
+
                 echo "PostgreSQL not ready yet (attempt $ATTEMPT/$MAX_RETRIES)..."
                 ATTEMPT=$((ATTEMPT+1))
-                sleep $RETRY_INTERVAL
+                sleep "$RETRY_INTERVAL"
               done
 
               echo "PostgreSQL ready. Creating tenant databases if missing..."
-              {{- range $tenant := keys .Values.damap.multitenancy.tenants }}
+
+              {{- range $tenant := keys .Values.damap.multitenancy.tenants | sortAlpha }}
               echo "Checking database '{{ $tenant }}'"
-              if ! psql -h {{ $.Values.postgres.host }} -p {{ $.Values.postgres.port }} -U {{ $.Values.damap.dbUser }} -d postgres -tc "SELECT 1 FROM pg_database WHERE datname='{{ $tenant }}'" | grep -q 1; then
+
+              if ! psql \
+                -h {{ include "postgresHost" $ }} \
+                -p {{ $.Values.postgres.port }} \
+                -d postgres \
+                -tAc "SELECT 1 FROM pg_database WHERE datname='{{ $tenant }}'" |
+                grep -qx 1; then
+
                 echo "Database '{{ $tenant }}' does not exist. Creating..."
-                psql -h {{ $.Values.postgres.host }} -p {{ $.Values.postgres.port }} -U {{ $.Values.damap.dbUser }} -d postgres -c "CREATE DATABASE {{ $tenant }} OWNER {{ $.Values.damap.dbUser }} TEMPLATE template0"
+
+                psql \
+                  -h {{ include "postgresHost" $ }} \
+                  -p {{ $.Values.postgres.port }} \
+                  -d postgres \
+                  -c "CREATE DATABASE \"{{ $tenant }}\" OWNER \"$PGUSER\" TEMPLATE template0"
+
                 echo "Database '{{ $tenant }}' created."
               else
                 echo "Database '{{ $tenant }}' already exists. Skipping."
               fi
               {{- end }}
+
               echo "Tenant database initialization finished."
       {{- end }}
 
@@ -171,7 +203,7 @@ spec:
             Database configuration
             */}}
             - name: DAMAP_DB_HOST
-              value: "{{ .Values.postgres.host }}"
+              value: "{{ include "postgresHost" . }}"
             - name: DAMAP_DB_PORT
               value: "{{ .Values.postgres.port }}"
             - name: QUARKUS_DATASOURCE_DB_KIND
@@ -196,7 +228,7 @@ spec:
             - name: QUARKUS_DATASOURCE_BOOTSTRAP_JDBC_DRIVER
               value: org.postgresql.Driver
             - name: QUARKUS_DATASOURCE_BOOTSTRAP_JDBC_URL
-              value: "jdbc:postgresql://{{ .Values.postgres.host }}:{{ .Values.postgres.port }}/{{ .Values.damap.dbName }}"
+              value: "jdbc:postgresql://{{ include "postgresHost" . }}:{{ .Values.postgres.port }}/{{ .Values.damap.dbName }}"
             - name: QUARKUS_DATASOURCE_BOOTSTRAP_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -455,7 +487,7 @@ spec:
       port: 8080
       targetPort: 8080
 ---
-{{- if and .Values.postgres.deploy (eq .Values.postgres.mode "simple") }}
+{{- if (eq .Values.postgres.mode "simple") }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:

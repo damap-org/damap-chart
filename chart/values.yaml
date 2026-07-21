@@ -130,8 +130,6 @@ gotenberg:
 
 postgres:
   cnpg:
-    applicationSecret: damap-cnpg-app # added for testing purposes, the mechanism will be reworked if stable
-
     backup:
       accessKeyIdKey: ""
       destinationPath: ""
@@ -146,17 +144,8 @@ postgres:
       target: prefer-standby
 
     clusterName: damap-db
-    enabled: false
     image: ghcr.io/cloudnative-pg/postgresql:16
     instances: 2
-
-    resources:
-      requests:
-        cpu: 10m
-        memory: 512Mi
-      limits:
-        cpu: 250m
-        memory: 2Gi
 
     storage:
       size: 20Gi
@@ -166,6 +155,11 @@ postgres:
       enabled: false
       size: 5Gi
       storageClassName: ""
+
+    secret:
+      # Existing CNPG application Secret of type kubernetes.io/basic-auth.
+      # When empty, the chart creates <clusterName>-app using the DAMAP DB credentials.
+      name: ""
 
   deploy: true
   host: damap-db
