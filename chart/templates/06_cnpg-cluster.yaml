@@ -14,8 +14,8 @@ spec:
 
   bootstrap:
     initdb:
-      database: {{ .Values.damap.dbName | quote }}
-      owner: {{ .Values.damap.dbUser | quote }}
+      database: {{ include "databaseName" . | quote }}
+      owner: {{ include "cnpgOwner" . | quote }}
       secret:
         name: {{ include "cnpgSecretName" . | quote }}
 

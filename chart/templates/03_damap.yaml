@@ -228,7 +228,7 @@ spec:
             - name: QUARKUS_DATASOURCE_BOOTSTRAP_JDBC_DRIVER
               value: org.postgresql.Driver
             - name: QUARKUS_DATASOURCE_BOOTSTRAP_JDBC_URL
-              value: "jdbc:postgresql://{{ include "postgresHost" . }}:{{ .Values.postgres.port }}/{{ .Values.damap.dbName }}"
+              value: "jdbc:postgresql://{{ include "postgresHost" . }}:{{ .Values.postgres.port }}/{{ include "databaseName" . }}"
             - name: QUARKUS_DATASOURCE_BOOTSTRAP_PASSWORD
               valueFrom:
                 secretKeyRef:
