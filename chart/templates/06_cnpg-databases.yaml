@@ -4,11 +4,19 @@
   (eq .Values.postgres.mode "cnpg")
 }}
 {{- range $tenant := keys .Values.damap.multitenancy.tenants | sortAlpha }}
+{{- $resourceName :=  printf "%s-%s" $.Values.postgres.cnpg.clusterName $tenant
+    | lower
+    | replace "_" "-"
+    | regexReplaceAll "[^a-z0-9.-]+" "-"
+    | trimAll "-."
+    | trunc 63
+    | trimAll "-."
+}}
 ---
 apiVersion: postgresql.cnpg.io/v1
 kind: Database
 metadata:
-  name: {{ printf "%s-%s" $.Values.postgres.cnpg.clusterName $tenant | trunc 63 | trimSuffix "-" }}
+  name: {{ $resourceName }}
   namespace: {{ $.Release.Namespace }}
   labels:
     app: damap-db
