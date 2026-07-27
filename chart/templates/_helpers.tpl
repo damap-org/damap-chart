@@ -49,8 +49,8 @@ If a custom secret name is provided in the values, use it; otherwise, default to
 NOTE: This secret will be created by the chart if it does not already exist.
 */}}
 {{- define "cnpgSecretName" }}
-  {{- if .Values.postgres.cnpg.secret.name }}
-    {{- .Values.postgres.cnpg.secret.name }}
+  {{- if .Values.postgres.cnpg.authSecretName }}
+    {{- .Values.postgres.cnpg.authSecretName }}
   {{- else }}
     {{- printf "%s-app" .Values.postgres.cnpg.clusterName }}
   {{- end }}

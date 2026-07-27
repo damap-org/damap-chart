@@ -44,10 +44,10 @@ spec:
       {{- end }}
       s3Credentials:
         accessKeyId:
-          name: {{ required "postgres.cnpg.backup.existingSecret is required when CNPG backups are enabled" .Values.postgres.cnpg.backup.existingSecret }}
+          name: {{ required "postgres.cnpg.backup.bucketSecretName is required when CNPG backups are enabled" .Values.postgres.cnpg.backup.bucketSecretName }}
           key: {{ .Values.postgres.cnpg.backup.accessKeyIdKey }}
         secretAccessKey:
-          name: {{ required "postgres.cnpg.backup.existingSecret is required when CNPG backups are enabled" .Values.postgres.cnpg.backup.existingSecret }}
+          name: {{ required "postgres.cnpg.backup.bucketSecretName is required when CNPG backups are enabled" .Values.postgres.cnpg.backup.bucketSecretName }}
           key: {{ .Values.postgres.cnpg.backup.secretAccessKeyKey }}
       wal:
         compression: gzip

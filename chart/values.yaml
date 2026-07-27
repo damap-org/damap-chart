@@ -130,12 +130,16 @@ gotenberg:
 
 postgres:
   cnpg:
+    # Existing CNPG application Secret of type kubernetes.io/basic-auth.
+    # When empty, the chart creates <clusterName>-app using the DAMAP DB credentials.
+    authSecretName: ""
+
     backup:
       accessKeyIdKey: ""
       destinationPath: ""
       enabled: false
       endpointURL: ""
-      existingSecret: ""
+      bucketSecretName: ""
       immediate: false
       retentionPolicy: "30d"
       secretAccessKeyKey: ""
@@ -156,11 +160,6 @@ postgres:
       enabled: false
       size: 5Gi
       storageClassName: ""
-
-    secret:
-      # Existing CNPG application Secret of type kubernetes.io/basic-auth.
-      # When empty, the chart creates <clusterName>-app using the DAMAP DB credentials.
-      name: ""
 
   deploy: true
   host: damap-db
