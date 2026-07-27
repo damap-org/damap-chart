@@ -139,6 +139,7 @@ postgres:
       immediate: false
       retentionPolicy: "30d"
       secretAccessKeyKey: ""
+      serverName: ""
       schedule: "0 0 2 * * *" # Every day at 2:00 AM
       suspend: false
       target: prefer-standby

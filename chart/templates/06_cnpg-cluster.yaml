@@ -39,6 +39,9 @@ spec:
     barmanObjectStore:
       destinationPath: {{ required "postgres.cnpg.backup.destinationPath is required when CNPG backups are enabled" .Values.postgres.cnpg.backup.destinationPath | quote }}
       endpointURL: {{ required "postgres.cnpg.backup.endpointURL is required when CNPG backups are enabled" .Values.postgres.cnpg.backup.endpointURL | quote }}
+      {{- if .Values.postgres.cnpg.backup.serverName }}
+      serverName: {{ .Values.postgres.cnpg.backup.serverName | quote }}
+      {{- end }}
       s3Credentials:
         accessKeyId:
           name: {{ required "postgres.cnpg.backup.existingSecret is required when CNPG backups are enabled" .Values.postgres.cnpg.backup.existingSecret }}
