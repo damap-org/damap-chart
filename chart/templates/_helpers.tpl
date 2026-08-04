@@ -35,7 +35,7 @@ Read the CNPG application role name from the existing basic-auth Secret.
 {{- define "cnpgOwner" }}
   {{- $secretName := include "cnpgSecretName" . }}
   {{- $secret := lookup "v1" "Secret" .Release.Namespace $secretName }}
-  
+
   {{- if and $secret $secret.data (hasKey $secret.data "username") }}
     {{- index $secret.data "username" | b64dec }}
   {{- else }}

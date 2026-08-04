@@ -24,7 +24,7 @@ spec:
     {{- if .Values.postgres.cnpg.storage.storageClassName  }}
     storageClass: {{ .Values.postgres.cnpg.storage.storageClassName | quote }}
     {{- end }}
-  
+
   {{- if .Values.postgres.cnpg.walStorage.enabled }}
   walStorage:
     size: {{ .Values.postgres.cnpg.walStorage.size | quote }}

@@ -1,15 +1,15 @@
-{{- if and 
+{{- if and
   .Values.damap.multitenancy.enabled
   .Values.damap.multitenancy.autoCreateDatabases
   (eq .Values.postgres.mode "cnpg")
 }}
 {{- range $tenant := keys .Values.damap.multitenancy.tenants | sortAlpha }}
-{{- $rawResourceName := printf "%s-%s" $.Values.postgres.cnpg.clusterName $tenant 
-    | lower 
+{{- $rawResourceName := printf "%s-%s" $.Values.postgres.cnpg.clusterName $tenant
+    | lower
     | replace "_" "-"
 }}
 {{- $resourceName := regexReplaceAll "[^a-z0-9.-]+" $rawResourceName "-"
-    | trimAll "-." 
+    | trimAll "-."
     | trunc 63
     | trimAll "-."
 }}

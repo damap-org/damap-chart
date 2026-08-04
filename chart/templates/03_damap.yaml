@@ -198,7 +198,7 @@ spec:
 
             - name: DAMAP_ENV
               value: "{{ if eq .Values.debug true }}DEV{{ else }}PROD{{ end }}"
-            
+
             {{- /*
             Database configuration
             */}}
@@ -273,7 +273,7 @@ spec:
 
             {{- if .Values.keycloak.deploy }}
               {{- /* Case where OIDC Keycloak is deployed alongside DAMAP */}}
-              
+
               {{- $kcPath := include "keycloakPath" . | trim }}
 
               {{- if eq .Values.keycloak.hostname "localhost" }}
