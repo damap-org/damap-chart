@@ -1,0 +1,32 @@
+{{- if and
+  .Values.damap.multitenancy.enabled
+  .Values.damap.multitenancy.autoCreateDatabases
+  (eq .Values.postgres.mode "cnpg")
+}}
+{{- range $tenant := keys .Values.damap.multitenancy.tenants | sortAlpha }}
+{{- $rawResourceName := printf "%s-%s" $.Values.postgres.cnpg.clusterName $tenant
+    | lower
+    | replace "_" "-"
+}}
+{{- $resourceName := regexReplaceAll "[^a-z0-9.-]+" $rawResourceName "-"
+    | trimAll "-."
+    | trunc 63
+    | trimAll "-."
+}}
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: {{ $resourceName }}
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    app: damap-db
+    damap.org/tenant: {{ $tenant | quote }}
+spec:
+  cluster:
+    name: {{ $.Values.postgres.cnpg.clusterName | quote }}
+  name: {{ $tenant | quote }}
+  owner: {{ include "cnpgOwner" $ | quote }}
+  databaseReclaimPolicy: retain
+{{- end }}
+{{- end }}
