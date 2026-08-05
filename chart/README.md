@@ -2,7 +2,7 @@
 
 This Helm chart deploys [DAMAP](https://damap.org) on a Kubernetes or OpenShift cluster. Some features, such as auto-creating a custom build from Git, are only supported on OpenShift.
 
-## Pre-requisites
+## Prerequisites
 
 Before deploying:
 
@@ -10,6 +10,7 @@ Before deploying:
 - An Ingress controller (vanilla Kubernetes)
 - TLS certificate provisioning (recommended for production)
 - Persistent storage (or hostPath for local testing)
+- The [CloudNativePG operator](https://cloudnative-pg.io/) when using `postgres.mode=cnpg`
 
 ## Storage (vanilla Kubernetes only)
 
@@ -22,13 +23,13 @@ This chart is published as an OCI artifact.
 Install:
 
 ```bash
-helm install damap oci://ghcr.io/damap-org/damap-chart --version 0.1.0
+helm install damap oci://ghcr.io/damap-org/damap-chart --version 0.3.0
 ```
 
 Upgrade:
 
 ```bash
-helm upgrade damap oci://ghcr.io/damap-org/damap-chart --version 0.1.0
+helm upgrade damap oci://ghcr.io/damap-org/damap-chart --version 0.3.0
 ```
 
 ## Configuration
@@ -63,7 +64,7 @@ All configuration is managed via `values.yaml`. Below are the main sections you 
 | dbPassword           | Database password.                                                                         | damap_pass        |
 | dbUser               | Database user.                                                                             | damap             |
 | evaluationServiceUrl | DMP evaluation service URL. Leave empty to disable the integration.                        |                   |
-| frontendVersion      | Frontend image tag.                                                                        | 5.0.0             |
+| frontendVersion      | Frontend image tag.                                                                        | 5.0.1             |
 | hostFolder           | Base directory for `hostPath` persistence. Demo and small-scale deployments only.          | /tmp/damap        |
 | hostname             | Public hostname.                                                                           | localhost         |
 | ingressClass         | Ingress class name.                                                                        |                   |
@@ -125,12 +126,46 @@ damap:
 
 #### PostgreSQL (`postgres`)
 
-| Variable  | Description                                                                 | Default           |
-| --------- | --------------------------------------------------------------------------- | ----------------- |
-| deploy    | Deploy the bundled PostgreSQL instance. Set to false for external database. | true              |
-| host      | Hostname for the PostgreSQL server used by DAMAP.                           | damap-db          |
-| port      | TCP port for the PostgreSQL server used by DAMAP.                           | 5432              |
-| resources | Resource requests and limits for the bundled PostgreSQL container.          | See `values.yaml` |
+Select one of three deployment modes with `postgres.mode`:
+
+- `simple` deploys the chart's bundled single-instance PostgreSQL Deployment.
+- `external` connects DAMAP to the server configured by `postgres.host` and `postgres.port`.
+- `cnpg` creates a CloudNativePG cluster. The CloudNativePG operator must already be installed.
+
+| Variable  | Description                                                                                     | Default           |
+| --------- | ----------------------------------------------------------------------------------------------- | ----------------- |
+| host      | PostgreSQL hostname used in `simple` and `external` modes. CNPG derives its read/write service. | damap-db          |
+| mode      | PostgreSQL deployment mode: `simple`, `external`, or `cnpg`.                                    | simple            |
+| port      | TCP port for the PostgreSQL server used by DAMAP.                                               | 5432              |
+| resources | Resource requests and limits for the simple PostgreSQL container or CNPG cluster.               | See `values.yaml` |
+
+#### CloudNativePG (`postgres.cnpg`)
+
+| Variable                    | Description                                                                                         | Default                              |
+| --------------------------- | --------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| authSecretName              | Existing `kubernetes.io/basic-auth` Secret for the application role. Empty creates `<cluster>-app`. |                                      |
+| backup.accessKeyIdKey       | Key in the credentials Secret containing the access key ID.                                         |                                      |
+| backup.bucketSecretName     | Secret containing the S3 credentials. Required when backups are enabled.                            |                                      |
+| backup.destinationPath      | Object-store destination, for example `s3://bucket/path`. Required when backups are enabled.        |                                      |
+| backup.enabled              | Enable S3-compatible backups and create a CNPG `ScheduledBackup`.                                   | false                                |
+| backup.endpointURL          | S3-compatible endpoint URL. Required when backups are enabled.                                      |                                      |
+| backup.immediate            | Run a backup immediately when the `ScheduledBackup` is created.                                     | false                                |
+| backup.retentionPolicy      | Backup retention policy.                                                                            | 30d                                  |
+| backup.schedule             | Six-field cron schedule (includes seconds).                                                         | `0 0 2 * * *` (daily at 02:00)       |
+| backup.secretAccessKeyKey   | Key in the credentials Secret containing the secret access key.                                     |                                      |
+| backup.serverName           | Optional server name used in the object-store path.                                                 |                                      |
+| backup.suspend              | Suspend scheduled backups.                                                                          | false                                |
+| backup.target               | Instance role targeted for backups: `primary` or `prefer-standby`.                                  | prefer-standby                       |
+| clusterName                 | Name of the CNPG `Cluster` resource.                                                                | damap-db                             |
+| image                       | CNPG-compatible PostgreSQL image.                                                                   | ghcr.io/cloudnative-pg/postgresql:16 |
+| instances                   | Number of PostgreSQL instances.                                                                     | 2                                    |
+| storage.size                | Data volume size.                                                                                   | 20Gi                                 |
+| storage.storageClassName    | StorageClass for data volumes. Empty uses the cluster default.                                      |                                      |
+| walStorage.enabled          | Provision dedicated WAL storage.                                                                    | false                                |
+| walStorage.size             | WAL volume size.                                                                                    | 5Gi                                  |
+| walStorage.storageClassName | StorageClass for WAL volumes. Empty uses the cluster default.                                       |                                      |
+
+When `damap.multitenancy.enabled` and `damap.multitenancy.autoCreateDatabases` are both true, CNPG `Database` resources are created for each configured tenant.
 
 #### OIDC Server (`keycloak`)
 
@@ -254,7 +289,7 @@ helm install --values values.yaml <RELEASE_NAME> ./  # Install the chart.
 3. **Passwords mismatch after redeployment** – When using KinD or hostPath volumes locally, deleting a Helm release does not remove the underlying database files. If you rely on auto-generated passwords, redeploying may fail because the persisted database expects the old password.
 
    Solutions:
-   - Manually delete the local volume data (`host_path` paths in your KinD node) before redeploying.
+   - Manually delete the local volume data (`hostPath` paths in your KinD node) before redeploying.
    - Alternatively, set fixed passwords in your `values.yaml` for stable local testing.
 
 ## Versioning Strategy

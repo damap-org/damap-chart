@@ -10,7 +10,7 @@
       "title": "Debug",
       "description": "Deploy a non-production debug instance",
       "type": "boolean",
-      "default": false
+      "default": true
     },
     "openshift": {
       "title": "OpenShift",
@@ -523,17 +523,167 @@
       "description": "PostgreSQL deployment configuration.",
       "type": "object",
       "properties": {
-        "deploy": {
-          "title": "Deploy",
-          "description": "Deploy the bundled PostgreSQL instance.",
-          "type": "boolean",
-          "default": true
+        "cnpg": {
+          "title": "CloudNativePG",
+          "description": "CloudNativePG cluster and backup configuration. Used when postgres.mode is cnpg.",
+          "type": "object",
+          "properties": {
+            "authSecretName": {
+              "title": "Authentication secret",
+              "description": "Name of an existing kubernetes.io/basic-auth Secret for the CNPG application role. When empty, the chart creates <clusterName>-app.",
+              "type": "string",
+              "default": ""
+            },
+            "backup": {
+              "title": "Backups",
+              "description": "S3-compatible object-store backup configuration.",
+              "type": "object",
+              "properties": {
+                "accessKeyIdKey": {
+                  "description": "Key in bucketSecretName containing the S3 access key ID.",
+                  "type": "string",
+                  "default": ""
+                },
+                "bucketSecretName": {
+                  "description": "Name of the Secret containing S3 credentials.",
+                  "type": "string",
+                  "default": ""
+                },
+                "destinationPath": {
+                  "description": "S3 destination path, for example s3://bucket/path.",
+                  "type": "string",
+                  "default": ""
+                },
+                "enabled": {
+                  "description": "Enable CNPG object-store backups and create a ScheduledBackup.",
+                  "type": "boolean",
+                  "default": false
+                },
+                "endpointURL": {
+                  "description": "S3-compatible object-store endpoint URL.",
+                  "type": "string",
+                  "default": ""
+                },
+                "immediate": {
+                  "description": "Run a backup immediately when the ScheduledBackup is created.",
+                  "type": "boolean",
+                  "default": false
+                },
+                "retentionPolicy": {
+                  "description": "Retention policy for backups.",
+                  "type": "string",
+                  "default": "30d"
+                },
+                "schedule": {
+                  "description": "Six-field cron schedule for CNPG backups.",
+                  "type": "string",
+                  "default": "0 0 2 * * *"
+                },
+                "secretAccessKeyKey": {
+                  "description": "Key in bucketSecretName containing the S3 secret access key.",
+                  "type": "string",
+                  "default": ""
+                },
+                "serverName": {
+                  "description": "Optional server name used as the object-store backup path.",
+                  "type": "string",
+                  "default": ""
+                },
+                "suspend": {
+                  "description": "Suspend scheduled backups.",
+                  "type": "boolean",
+                  "default": false
+                },
+                "target": {
+                  "description": "CNPG instance role targeted for backups.",
+                  "type": "string",
+                  "enum": [
+                    "primary",
+                    "prefer-standby"
+                  ],
+                  "default": "prefer-standby"
+                }
+              }
+            },
+            "clusterName": {
+              "title": "Cluster name",
+              "description": "Name of the CNPG Cluster resource.",
+              "type": "string",
+              "minLength": 1,
+              "default": "damap-db"
+            },
+            "image": {
+              "title": "PostgreSQL image",
+              "description": "CNPG-compatible PostgreSQL container image.",
+              "type": "string",
+              "minLength": 1,
+              "default": "ghcr.io/cloudnative-pg/postgresql:16"
+            },
+            "instances": {
+              "title": "Instances",
+              "description": "Number of PostgreSQL instances in the CNPG cluster.",
+              "type": "integer",
+              "minimum": 1,
+              "default": 2
+            },
+            "storage": {
+              "title": "Data storage",
+              "type": "object",
+              "properties": {
+                "size": {
+                  "description": "Persistent volume size for PostgreSQL data.",
+                  "type": "string",
+                  "minLength": 1,
+                  "default": "20Gi"
+                },
+                "storageClassName": {
+                  "description": "StorageClass for PostgreSQL data volumes. Empty uses the cluster default.",
+                  "type": "string",
+                  "default": ""
+                }
+              }
+            },
+            "walStorage": {
+              "title": "WAL storage",
+              "description": "Optional dedicated storage for PostgreSQL write-ahead logs.",
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "description": "Enable a dedicated WAL volume.",
+                  "type": "boolean",
+                  "default": false
+                },
+                "size": {
+                  "description": "Persistent volume size for WAL data.",
+                  "type": "string",
+                  "minLength": 1,
+                  "default": "5Gi"
+                },
+                "storageClassName": {
+                  "description": "StorageClass for WAL volumes. Empty uses the cluster default.",
+                  "type": "string",
+                  "default": ""
+                }
+              }
+            }
+          }
         },
         "host": {
           "title": "Host",
           "description": "Hostname for the PostgreSQL server.",
           "type": "string",
           "default": "damap-db"
+        },
+        "mode": {
+          "title": "Deployment mode",
+          "description": "PostgreSQL deployment mode: simple deploys the bundled Deployment, external uses postgres.host, and cnpg creates CloudNativePG resources.",
+          "type": "string",
+          "enum": [
+            "simple",
+            "external",
+            "cnpg"
+          ],
+          "default": "simple"
         },
         "port": {
           "title": "Port",
@@ -912,7 +1062,7 @@
           "title": "Enabled",
           "description": "Enable the Elsevier Pure integration. If false, the Pure integration will be disabled and the backend will not attempt to fetch data from Pure.",
           "type": "boolean",
-          "default": false
+          "default": true
         },
         "endpoint": {
           "title": "Endpoint",

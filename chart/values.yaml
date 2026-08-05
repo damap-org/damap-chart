@@ -161,7 +161,6 @@ postgres:
       size: 5Gi
       storageClassName: ""
 
-  deploy: true
   host: damap-db
   mode: simple # simple | external | cnpg
   port: 5432
