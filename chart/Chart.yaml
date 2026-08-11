@@ -3,7 +3,7 @@ name: damap-chart
 description: A tool to create machine-actionable data management plans.
 type: application
 
-version: 0.2.1
+version: 0.3.0
 appVersion: "5.0.1"
 
 kubeVersion: ">=1.25.0"
@@ -31,11 +31,13 @@ maintainers:
 icon: https://damap.org/logo.svg
 
 annotations:
+  artifacthub.io/license: MIT
   artifacthub.io/changes: |
+    - kind: added
+      description: Add CloudNativePG as a supported PostgreSQL deployment mode
+    - kind: added
+      description: Add S3-compatible backup support for CloudNativePG
+    - kind: added
+      description: Add CloudNativePG support for multitenancy deployments
     - kind: changed
-      description: Bump DAMAP frontend to 5.0.1
-    - kind: changed
-      description: Bump Keycloak to 26.4
-
-    - kind: fixed
-      description: Prevent PostgreSQL collation version mismatches for newly created databases
+      description: Replace postgres.deploy with postgres.mode; use external mode for an externally managed PostgreSQL server
