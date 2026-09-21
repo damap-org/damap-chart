@@ -3,7 +3,7 @@
   .Values.damap.multitenancy.autoCreateDatabases
   (eq .Values.postgres.mode "cnpg")
 }}
-{{- range $tenant := keys .Values.damap.multitenancy.tenants | sortAlpha }}
+{{- range $tenant := keys (include "damapTenants" . | fromYaml) | sortAlpha }}
 {{- $rawResourceName := printf "%s-%s" $.Values.postgres.cnpg.clusterName $tenant
     | lower
     | replace "_" "-"
