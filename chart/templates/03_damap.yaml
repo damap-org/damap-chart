@@ -136,7 +136,7 @@ spec:
 
               echo "PostgreSQL ready. Creating tenant databases if missing..."
 
-              {{- range $tenant := keys .Values.damap.multitenancy.tenants | sortAlpha }}
+              {{- range $tenant := keys (include "damapTenants" . | fromYaml) | sortAlpha }}
               echo "Checking database '{{ $tenant }}'"
 
               if ! psql \

@@ -12,6 +12,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Test multitenancy rendering
+        run: |
+          python3 -m pip install PyYAML==6.0.2
+          python3 scripts/test-multitenancy.py
+
       - name: Install KinD
         run: |
           set -euo pipefail

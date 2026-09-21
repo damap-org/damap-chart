@@ -1,11 +1,6 @@
 {{- if .Values.damap.multitenancy.enabled }}
-{{- $tenants := keys .Values.damap.multitenancy.tenants }}
-
-{{- /* Build tenant-configs map */}}
-{{- $tenantConfigs := dict }}
-{{- range $tenants }}
-{{- $_ := set $tenantConfigs . (index $.Values.damap.multitenancy.tenants .) }}
-{{- end }}
+{{- $tenantConfigs := include "damapTenants" . | fromYaml }}
+{{- $tenants := keys $tenantConfigs | sortAlpha }}
 
 {{- /* Build datasource map */}}
 {{- $datasources := dict }}
