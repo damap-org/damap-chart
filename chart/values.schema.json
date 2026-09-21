@@ -224,7 +224,7 @@
             },
             "tenants": {
               "title": "Tenants",
-              "description": "Map of tenant identifiers to tenant-specific DAMAP configuration. Each tenant key is also used as the database name.",
+              "description": "Map of tenant identifiers to tenant-specific DAMAP configuration. Each tenant key is also used as the database name. An empty map uses the bundled tenant_1 and tenant_2 examples; a non-empty map replaces the examples entirely.",
               "type": "object",
               "additionalProperties": {
                 "type": "object",

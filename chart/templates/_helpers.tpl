@@ -83,3 +83,15 @@ If yes, prefix Keycloak paths with /auth to avoid collisions.
     /
   {{- end }}
 {{- end }}
+
+{{- /*
+Use custom tenants as a complete replacement for the bundled examples.
+Keep examples outside values.yaml so Helm cannot merge them into custom tenants.
+*/}}
+{{- define "damapTenants" -}}
+{{- if .Values.damap.multitenancy.tenants -}}
+{{- toYaml .Values.damap.multitenancy.tenants -}}
+{{- else -}}
+{{- .Files.Get "files/default-tenants.yaml" -}}
+{{- end -}}
+{{- end -}}

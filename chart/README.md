@@ -86,7 +86,9 @@ All configuration is managed via `values.yaml`. Below are the main sections you 
 | autoCreateDatabases | Automatically create databases for tenants.                                                       | false                      |
 | enabled             | Enable multi-tenant mode.                                                                         | false                      |
 | initContainer       | Resource requests and limits for the multitenancy init container.                                 | See `values.yaml`          |
-| tenants             | Map of tenant IDs to tenant-specific DAMAP configuration. The tenant ID is used as database name. | See `values.yaml` example. |
+| tenants             | Map of tenant IDs to tenant-specific DAMAP configuration. The tenant ID is used as database name. | `{}`                      |
+
+When multitenancy is enabled, an omitted or empty `tenants` map uses the bundled `tenant_1` and `tenant_2` examples for testing. A non-empty map replaces the examples entirely, including their settings: only the supplied tenants are configured and provisioned. The examples live in `files/default-tenants.yaml` so Helm cannot merge them into custom tenants.
 
 Example tenant configuration:
 
@@ -108,6 +110,8 @@ damap:
             query-value: ORCID
             class-name: org.damap.base.integration.orcid.ORCIDPersonServiceImpl
 ```
+
+When upgrading from a version that included `tenant_1` and `tenant_2` directly in `values.yaml`, use a complete values file with `helm upgrade --reset-values` to avoid carrying those entries forward through reused values. Include either ID explicitly if it is a real tenant. This change does not delete existing PostgreSQL databases; review any unwanted example databases before removing them manually. CNPG tenant databases use `databaseReclaimPolicy: retain`.
 
 #### Frontend Customization (`frontend`)
 
