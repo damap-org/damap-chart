@@ -23,13 +23,13 @@ This chart is published as an OCI artifact.
 Install:
 
 ```bash
-helm install damap oci://ghcr.io/damap-org/damap-chart --version 0.3.0
+helm install damap oci://ghcr.io/damap-org/damap-chart --version 0.3.1
 ```
 
 Upgrade:
 
 ```bash
-helm upgrade damap oci://ghcr.io/damap-org/damap-chart --version 0.3.0
+helm upgrade damap oci://ghcr.io/damap-org/damap-chart --version 0.3.1
 ```
 
 ## Configuration
@@ -58,13 +58,13 @@ All configuration is managed via `values.yaml`. Below are the main sections you 
 
 | Variable             | Description                                                                                | Default           |
 | -------------------- | ------------------------------------------------------------------------------------------ | ----------------- |
-| backendVersion       | Backend image tag.                                                                         | 5.0.0             |
+| backendVersion       | Backend image tag.                                                                         | 5.0.1             |
 | customDomain         | Use custom domain routing.                                                                 | false             |
 | dbName               | Database name.                                                                             | damap             |
 | dbPassword           | Database password.                                                                         | damap_pass        |
 | dbUser               | Database user.                                                                             | damap             |
 | evaluationServiceUrl | DMP evaluation service URL. Leave empty to disable the integration.                        |                   |
-| frontendVersion      | Frontend image tag.                                                                        | 5.0.1             |
+| frontendVersion      | Frontend image tag.                                                                        | 5.0.2             |
 | hostFolder           | Base directory for `hostPath` persistence. Demo and small-scale deployments only.          | /tmp/damap        |
 | hostname             | Public hostname.                                                                           | localhost         |
 | ingressClass         | Ingress class name.                                                                        |                   |
