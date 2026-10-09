@@ -304,7 +304,7 @@ spec:
             */}}
             - name: REST_GOTENBERG_MP_REST_URL
               value: "http://localhost:3000"
-            - name: REST_EVALUATION_MP_REST_URL
+            - name: DAMAP_TENANT_AWARE_EVALUATION_SERVICE_URL
               value: {{ .Values.damap.evaluationServiceUrl | quote }}
 
             {{- /*
@@ -318,6 +318,10 @@ spec:
             - name: DAMAP_TENANT_AWARE_PERSON_SERVICES_{{ $index }}__CLASS_NAME
               value: {{ index $svc "class-name" | quote }}
             {{- end }}
+            - name: DAMAP_TENANT_AWARE_GENERIC_CRIS_URL
+              value: {{ .Values.damap.genericCrisUrl | default "" | quote }}
+            - name: DAMAP_TENANT_AWARE_GENERIC_CRIS_API_KEY
+              value: {{ .Values.damap.genericCrisApiKey | default "" | quote }}
             - name: DAMAP_TENANT_AWARE_PROJECT_SERVICE
               value: {{ .Values.damap.projectService }}
 
