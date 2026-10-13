@@ -106,7 +106,7 @@
           "title": "Backend image",
           "description": "Container image for the backend",
           "type": "string",
-          "example": "4.5.0"
+          "example": "5.1.0"
         },
         "customDomain": {
           "title": "Custom domain",
@@ -147,7 +147,7 @@
           "title": "Frontend image",
           "description": "Container image for the frontend",
           "type": "string",
-          "example": "4.5.0"
+          "example": "5.1.0"
         },
         "hostFolder": {
           "title": "Host folder",
@@ -303,6 +303,37 @@
                         }
                       }
                     }
+                  },
+                  "evaluation-service-url": {
+                    "description": "Tenant-specific DMP evaluation service URL. Empty disables evaluation.",
+                    "type": "string",
+                    "anyOf": [
+                      {
+                        "maxLength": 0
+                      },
+                      {
+                        "format": "url"
+                      }
+                    ],
+                    "default": ""
+                  },
+                  "generic-cris-url": {
+                    "description": "Tenant-specific Generic CRIS base URL.",
+                    "type": "string",
+                    "anyOf": [
+                      {
+                        "maxLength": 0
+                      },
+                      {
+                        "format": "url"
+                      }
+                    ],
+                    "default": ""
+                  },
+                  "generic-cris-api-key": {
+                    "type": "string",
+                    "format": "password",
+                    "description": "Tenant-specific Generic CRIS API key."
                   }
                 }
               }
@@ -413,6 +444,27 @@
           "description": "Use a host folder for persistence (only for demo/small scale deployments, not for production)",
           "type": "boolean",
           "default": true
+        },
+        "genericCrisUrl": {
+          "title": "Generic CRIS URL",
+          "description": "Base URL of the optional Generic CRIS integration. Use projectService generic and/or GenericPersonService to select it.",
+          "type": "string",
+          "anyOf": [
+            {
+              "maxLength": 0
+            },
+            {
+              "format": "url"
+            }
+          ],
+          "default": ""
+        },
+        "genericCrisApiKey": {
+          "title": "Generic CRIS API key",
+          "description": "API key for the optional Generic CRIS integration.",
+          "type": "string",
+          "format": "password",
+          "default": ""
         }
       }
     },

@@ -58,13 +58,15 @@ All configuration is managed via `values.yaml`. Below are the main sections you 
 
 | Variable             | Description                                                                                | Default           |
 | -------------------- | ------------------------------------------------------------------------------------------ | ----------------- |
-| backendVersion       | Backend image tag.                                                                         | 5.0.1             |
+| backendVersion       | Backend image tag.                                                                         | 5.1.0             |
 | customDomain         | Use custom domain routing.                                                                 | false             |
 | dbName               | Database name.                                                                             | damap             |
 | dbPassword           | Database password.                                                                         | damap_pass        |
 | dbUser               | Database user.                                                                             | damap             |
 | evaluationServiceUrl | DMP evaluation service URL. Leave empty to disable the integration.                        |                   |
-| frontendVersion      | Frontend image tag.                                                                        | 5.0.2             |
+| frontendVersion      | Frontend image tag.                                                                        | 5.1.0             |
+| genericCrisUrl       | Base URL of the optional Generic CRIS integration.                                         |                   |
+| genericCrisApiKey    | API key for the optional Generic CRIS integration.                                         |                   |
 | hostFolder           | Base directory for `hostPath` persistence. Demo and small-scale deployments only.          | /tmp/damap        |
 | hostname             | Public hostname.                                                                           | localhost         |
 | ingressClass         | Ingress class name.                                                                        |                   |
@@ -79,14 +81,22 @@ All configuration is managed via `values.yaml`. Below are the main sections you 
 | useExistingSecret    | Use pre-created Kubernetes Secret instead of generating one.                               | false             |
 | useHostFolder        | Use `hostPath` storage from `hostFolder` when persistence is enabled. Demo/local use only. | true              |
 
+To use Generic CRIS for projects, set `damap.projectService: generic`. For person lookup, add the following entry to `damap.personServices` and configure `damap.genericCrisUrl` and `damap.genericCrisApiKey`:
+
+```yaml
+- display-text: "Generic CRIS"
+  query-value: "GENERIC"
+  class-name: "org.damap.base.integration.generic.GenericPersonService"
+```
+
 #### DAMAP Multitenancy (`damap.multitenancy`)
 
-| Key                 | Description                                                                                       | Default                    |
-| ------------------- | ------------------------------------------------------------------------------------------------- | -------------------------- |
-| autoCreateDatabases | Automatically create databases for tenants.                                                       | false                      |
-| enabled             | Enable multi-tenant mode.                                                                         | false                      |
-| initContainer       | Resource requests and limits for the multitenancy init container.                                 | See `values.yaml`          |
-| tenants             | Map of tenant IDs to tenant-specific DAMAP configuration. The tenant ID is used as database name. | `{}`                      |
+| Key                 | Description                                                                                       | Default           |
+| ------------------- | ------------------------------------------------------------------------------------------------- | ----------------- |
+| autoCreateDatabases | Automatically create databases for tenants.                                                       | false             |
+| enabled             | Enable multi-tenant mode.                                                                         | false             |
+| initContainer       | Resource requests and limits for the multitenancy init container.                                 | See `values.yaml` |
+| tenants             | Map of tenant IDs to tenant-specific DAMAP configuration. The tenant ID is used as database name. | `{}`              |
 
 When multitenancy is enabled, an omitted or empty `tenants` map uses the bundled `tenant_1` and `tenant_2` examples for testing. A non-empty map replaces the examples entirely, including their settings: only the supplied tenants are configured and provisioned. The examples live in `files/default-tenants.yaml` so Helm cannot merge them into custom tenants.
 
@@ -110,6 +120,8 @@ damap:
             query-value: ORCID
             class-name: org.damap.base.integration.orcid.ORCIDPersonServiceImpl
 ```
+
+For tenant-specific integrations, configure `evaluation-service-url` (empty disables evaluation), `generic-cris-url`, and `generic-cris-api-key` inside each tenant entry. Select `project-service: generic` and/or add the Generic CRIS person service to that tenant's `person-services` when needed. Keep tenant API keys in a protected values file; tenant configuration is rendered into the `damap-tenants` Secret.
 
 When upgrading from a version that included `tenant_1` and `tenant_2` directly in `values.yaml`, use a complete values file with `helm upgrade --reset-values` to avoid carrying those entries forward through reused values. Include either ID explicitly if it is a real tenant. This change does not delete existing PostgreSQL databases; review any unwanted example databases before removing them manually. CNPG tenant databases use `databaseReclaimPolicy: retain`.
 
