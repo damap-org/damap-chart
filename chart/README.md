@@ -23,13 +23,13 @@ This chart is published as an OCI artifact.
 Install:
 
 ```bash
-helm install damap oci://ghcr.io/damap-org/damap-chart --version 0.3.1
+helm install damap oci://ghcr.io/damap-org/damap-chart --version 0.4.0
 ```
 
 Upgrade:
 
 ```bash
-helm upgrade damap oci://ghcr.io/damap-org/damap-chart --version 0.3.1
+helm upgrade damap oci://ghcr.io/damap-org/damap-chart --version 0.4.0
 ```
 
 ## Configuration
