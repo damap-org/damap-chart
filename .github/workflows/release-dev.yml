@@ -62,29 +62,19 @@ jobs:
           CURRENT_DEV="${BASH_REMATCH[4]}"
           echo "Current version: $VERSION"
 
-          OWNER_LOWER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
-
-          export GH_TOKEN="${{ secrets.GITHUB_TOKEN }}"
-
-          TAGS=$(gh api \
+          TAGS=$(gh api --paginate \
             -H "Accept: application/vnd.github+json" \
-            /orgs/damap-org/packages/container/${CHART}/versions \
-            --jq '.[].metadata.container.tags[]' || true)
+            "/orgs/${GITHUB_REPOSITORY_OWNER,,}/packages/container/dev%2F${CHART}/versions" \
+            --jq '.[].metadata.container.tags[]')
 
-          LATEST_DEV=$(
-            echo "$TAGS" \
-              | grep -oE '[0-9]+\.[0-9]+\.[0-9]+-dev\.[0-9]+' || true \
-              | sed -E 's/.*-dev\.([0-9]+)/\1/' \
-              | sort -n \
-              | tail -1
-          )
-
-          LATEST_DEV=${LATEST_DEV:-0}
-
-          if [[ -z "${LATEST_DEV}" ]]; then
-            echo "No previous dev versions found, treating as first dev release."
-            LATEST_DEV=0
-          fi
+          BASE_VERSION=${VERSION%-dev.*}
+          LATEST_DEV=$(awk -F '-dev[.]' -v base="$BASE_VERSION" '
+            $1 == base && $2 ~ /^[0-9]+([+_][0-9a-f]+)?$/ {
+              number = $2 + 0
+              if (number > latest) latest = number
+            }
+            END { print latest + 0 }
+          ' <<< "$TAGS")
 
           echo "Latest published dev number: $LATEST_DEV"
 
@@ -140,4 +130,4 @@ jobs:
         run: |
           helm push \
             ${{ steps.chart.outputs.name }}-${{ steps.version.outputs.version }}.tgz \
-            oci://${{ env.REGISTRY }}/${{ github.repository_owner }}
+            oci://${{ env.REGISTRY }}/${{ github.repository_owner }}/dev
