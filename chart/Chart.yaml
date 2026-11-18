@@ -3,8 +3,8 @@ name: damap-chart
 description: A tool to create machine-actionable data management plans.
 type: application
 
-version: 0.4.0
-appVersion: "5.1.0"
+version: 0.4.1-dev.1
+appVersion: "5.1.1"
 
 kubeVersion: ">=1.25.0"
 
@@ -33,11 +33,4 @@ icon: https://damap.org/logo.svg
 annotations:
   artifacthub.io/license: MIT
   artifacthub.io/changes: |
-    - kind: added
-      description: Add configurable Generic CRIS URL and API key
-    - kind: changed
-      description: Bump DAMAP backend and frontend to 5.1.0
-    - kind: changed
-      description: Bump Keycloak to 26.6
-    - kind: changed
-      description: Update evaluation service config to use tenant-aware settings
+    - Dev release 0.4.1-dev.1
