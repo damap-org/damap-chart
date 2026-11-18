@@ -276,14 +276,12 @@ spec:
 
               {{- $kcPath := include "keycloakPath" . | trim }}
 
-              {{- if eq .Values.keycloak.hostname "localhost" }}
-                {{- /* Case where OIDC Keycloak is deployed locally */}}
-                {{- $authServerUrl = printf "http://keycloak:8080%s/realms/damap" $kcPath }}
-                {{- $issuer = printf "%s://%s%s/realms/damap" .Values.keycloak.protocol .Values.keycloak.hostname $kcPath }}
+              {{- $realmPath := printf "%s/realms/damap" (trimSuffix "/" $kcPath) }}
+              {{- $issuer = printf "%s://%s%s" .Values.keycloak.protocol .Values.keycloak.hostname $realmPath }}
+              {{- if or (eq .Values.keycloak.hostname "localhost") (eq .Values.keycloak.hostname .Values.damap.hostname) }}
+                {{- $authServerUrl = printf "http://keycloak:8080%s" $realmPath }}
               {{- else }}
-                {{- /* Case where OIDC Keycloak is deployed remotely */}}
-                {{- $authServerUrl = printf "%s://%s/realms/damap" .Values.keycloak.protocol .Values.keycloak.hostname }}
-                {{- $issuer = $authServerUrl }}
+                {{- $authServerUrl = $issuer }}
               {{- end }}
 
             {{- else }}
