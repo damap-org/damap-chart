@@ -86,16 +86,16 @@ spec:
             - forwarded
             - --import-realm
           env:
-            {{- if eq .Values.keycloak.hostname "localhost" }}
-            {{- if .Values.debug }}
+            {{- if and (eq .Values.keycloak.hostname "localhost") .Values.debug }}
             - name: KC_LOG_LEVEL_ORG_KEYCLOAK
               value: debug
             {{- end }}
+            {{- if or (eq .Values.keycloak.hostname "localhost") (eq .Values.keycloak.hostname .Values.damap.hostname) }}
             - name: KC_HOSTNAME_BACKCHANNEL_DYNAMIC
               value: "true"
             {{- end }}
             - name: KC_HOSTNAME
-              value: "{{ .Values.keycloak.protocol }}://{{ .Values.keycloak.hostname }}/auth"
+              value: "{{ .Values.keycloak.protocol }}://{{ .Values.keycloak.hostname }}{{ include "keycloakPath" . | trim | trimSuffix "/" }}"
             - name: KC_HTTP_RELATIVE_PATH
               value: "{{ include "keycloakPath" . | trim }}"
             - name: KC_BOOTSTRAP_ADMIN_USERNAME
