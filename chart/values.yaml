@@ -162,9 +162,14 @@ keycloak:
   # NOTE: Do not use for production!
   hostFolder: /tmp/keycloak
   hostname: localhost
+  # null enables dynamic backchannel URLs for localhost or a shared DAMAP hostname.
+  # false fixes discovery endpoints to the public hostname, which the backend must be able to reach.
+  hostnameBackchannelDynamic: null
   ingressClass: ""
   persistData: false
   protocol: http
+  # Match the headers supplied by your trusted reverse proxy.
+  proxyHeaders: forwarded
   resources:
     requests:
       cpu: 100m

@@ -83,17 +83,19 @@ spec:
             - start
             - --http-enabled=true
             - --proxy-headers
-            - forwarded
+            - {{ .Values.keycloak.proxyHeaders | quote }}
             - --import-realm
           env:
             {{- if and (eq .Values.keycloak.hostname "localhost") .Values.debug }}
             - name: KC_LOG_LEVEL_ORG_KEYCLOAK
               value: debug
             {{- end }}
-            {{- if or (eq .Values.keycloak.hostname "localhost") (eq .Values.keycloak.hostname .Values.damap.hostname) }}
-            - name: KC_HOSTNAME_BACKCHANNEL_DYNAMIC
-              value: "true"
+            {{- $backchannelDynamic := or (eq .Values.keycloak.hostname "localhost") (eq .Values.keycloak.hostname .Values.damap.hostname) }}
+            {{- if kindIs "bool" .Values.keycloak.hostnameBackchannelDynamic }}
+              {{- $backchannelDynamic = .Values.keycloak.hostnameBackchannelDynamic }}
             {{- end }}
+            - name: KC_HOSTNAME_BACKCHANNEL_DYNAMIC
+              value: {{ $backchannelDynamic | quote }}
             - name: KC_HOSTNAME
               value: "{{ .Values.keycloak.protocol }}://{{ .Values.keycloak.hostname }}{{ include "keycloakPath" . | trim | trimSuffix "/" }}"
             - name: KC_HTTP_RELATIVE_PATH

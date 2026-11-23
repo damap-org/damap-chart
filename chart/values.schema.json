@@ -789,6 +789,17 @@
         "dbUser"
       ],
       "properties": {
+        "hostnameBackchannelDynamic": {
+          "type": ["boolean", "null"],
+          "default": null,
+          "description": "Resolve backchannel URLs dynamically. Null enables this for localhost or a shared DAMAP hostname. False requires backend access to the public discovery endpoints."
+        },
+        "proxyHeaders": {
+          "type": "string",
+          "enum": ["forwarded", "xforwarded"],
+          "default": "forwarded",
+          "description": "Proxy header format supplied by the trusted reverse proxy."
+        },
         "adminPassword": {
           "title": "Admin password",
           "description": "Admin password for initial provisioning",

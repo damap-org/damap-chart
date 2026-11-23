@@ -188,27 +188,29 @@ When `damap.multitenancy.enabled` and `damap.multitenancy.autoCreateDatabases` a
 > [!TIP]
 > Set `keycloak.deploy=false` to use an external OIDC provider.
 
-| Key                | Description                                                        | Default           |
-| ------------------ | ------------------------------------------------------------------ | ----------------- |
-| adminPassword      | Admin password. Auto-generated if empty.                           |                   |
-| adminUser          | Username of the Keycloak administrator.                            | admin             |
-| customDomain       | Use custom domain routing.                                         | false             |
-| database.resources | Resource requests and limits for the Keycloak database container.  | See `values.yaml` |
-| dbName             | Keycloak database name.                                            | keycloak          |
-| dbPassword         | Database password. Auto-generated if empty.                        | keycloak123       |
-| dbUser             | Keycloak database user.                                            | keycloak          |
-| deploy             | Deploy bundled Keycloak instance.                                  | true              |
-| hostFolder         | Base directory for `hostPath` persistence. Demo/local use only.    | /tmp/keycloak     |
-| hostname           | Public hostname.                                                   | localhost         |
-| ingressClass       | Ingress class name.                                                |                   |
-| persistData        | Enable persistent storage.                                         | false             |
-| protocol           | Protocol to use for accessing Keycloak (`http` or `https`).        | http              |
-| resources          | Resource requests and limits for the Keycloak container.           | See `values.yaml` |
-| storageClassName   | StorageClass for persistent volumes.                               |                   |
-| storageSize        | Storage size for the Keycloak database PVC.                        | 5Gi               |
-| tlsClusterIssuer   | cert-manager ClusterIssuer for TLS.                                |                   |
-| useExistingSecret  | Use pre-created Kubernetes Secret instead of generating one.       | false             |
-| useHostFolder      | Use `hostPath` storage from `hostFolder` when persistence enabled. | true              |
+| Key                        | Description                                                                                                                                                               | Default           |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
+| adminPassword              | Admin password. Auto-generated if empty.                                                                                                                                  |                   |
+| adminUser                  | Username of the Keycloak administrator.                                                                                                                                   | admin             |
+| customDomain               | Use custom domain routing.                                                                                                                                                | false             |
+| database.resources         | Resource requests and limits for the Keycloak database container.                                                                                                         | See `values.yaml` |
+| dbName                     | Keycloak database name.                                                                                                                                                   | keycloak          |
+| dbPassword                 | Database password. Auto-generated if empty.                                                                                                                               | keycloak123       |
+| dbUser                     | Keycloak database user.                                                                                                                                                   | keycloak          |
+| deploy                     | Deploy bundled Keycloak instance.                                                                                                                                         | true              |
+| hostFolder                 | Base directory for `hostPath` persistence. Demo/local use only.                                                                                                           | /tmp/keycloak     |
+| hostname                   | Public hostname.                                                                                                                                                          | localhost         |
+| hostnameBackchannelDynamic | Dynamic backchannel URLs. Set to false for fixed public discovery endpoints reachable by the backend. Null enables dynamic URLs for localhost or a shared DAMAP hostname. | null              |
+| ingressClass               | Ingress class name.                                                                                                                                                       |                   |
+| persistData                | Enable persistent storage.                                                                                                                                                | false             |
+| protocol                   | Protocol to use for accessing Keycloak (`http` or `https`).                                                                                                               | http              |
+| proxyHeaders               | Header format supplied by the trusted reverse proxy. Accepts forwarded or xforwarded.                                                                                     | forwarded         |
+| resources                  | Resource requests and limits for the Keycloak container.                                                                                                                  | See `values.yaml` |
+| storageClassName           | StorageClass for persistent volumes.                                                                                                                                      |                   |
+| storageSize                | Storage size for the Keycloak database PVC.                                                                                                                               | 5Gi               |
+| tlsClusterIssuer           | cert-manager ClusterIssuer for TLS.                                                                                                                                       |                   |
+| useExistingSecret          | Use pre-created Kubernetes Secret instead of generating one.                                                                                                              | false             |
+| useHostFolder              | Use `hostPath` storage from `hostFolder` when persistence enabled.                                                                                                        | true              |
 
 #### Authentication (`oidc`)
 
