@@ -1,16 +1,30 @@
 name: CI
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
   workflow_call:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   test-helm:
+    name: Chart validation
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+
+      - name: Lint Helm chart
+        run: helm lint chart
 
       - name: Test multitenancy rendering
         run: |
@@ -20,7 +34,7 @@ jobs:
       - name: Install KinD
         run: |
           set -euo pipefail
-          curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.29.0/kind-linux-amd64
+          curl -fsSLo ./kind https://kind.sigs.k8s.io/dl/v0.29.0/kind-linux-amd64
           chmod +x kind
           sudo mv kind /usr/local/bin/kind
 
@@ -35,15 +49,14 @@ jobs:
           cd chart
           helm install damap ./ --values values.yaml
 
-      - name: Run health check
+      - name: Verify backend readiness through the ingress
         run: |
           set -euo pipefail
           max_attempts=8
           sleep_interval=2
 
           for i in $(seq 1 $max_attempts); do
-            response=$(curl -s -w "%{http_code}" -o /dev/null http://localhost/api/config)
-            if [ "$response" == "200" ]; then
+            if response=$(curl -sS --connect-timeout 2 --max-time 5 -w "%{http_code}" -o /dev/null http://localhost/api/config) && [ "$response" == "200" ]; then
               echo "Backend is healthy after $i attempts."
               exit 0
             fi
@@ -54,3 +67,12 @@ jobs:
 
           echo "Health check failed after $max_attempts attempts."
           exit 1
+
+      - name: Collect deployment diagnostics
+        if: failure()
+        run: |
+          kubectl get pods -A -o wide
+          kubectl get events -A --sort-by=.lastTimestamp
+          kubectl describe pods -l app=damap-backend
+          kubectl logs deployment/damap-backend --all-containers --tail=100
+          kubectl logs deployment/keycloak --tail=100
