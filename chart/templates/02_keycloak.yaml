@@ -230,14 +230,24 @@ spec:
                   key: dbDatabase
           ports:
             - containerPort: 5432
+          startupProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - /usr/bin/pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 60
           livenessProbe:
             exec:
               command:
                 - sh
                 - -c
                 - /usr/bin/pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"
-            initialDelaySeconds: 5
-            periodSeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
           {{- if .Values.openshift }}
           securityContext:
             allowPrivilegeEscalation: false
