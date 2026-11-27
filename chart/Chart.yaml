@@ -3,8 +3,8 @@ name: damap-chart
 description: A tool to create machine-actionable data management plans.
 type: application
 
-version: 0.4.0
-appVersion: "5.1.0"
+version: 0.4.1
+appVersion: "5.1.1"
 
 kubeVersion: ">=1.25.0"
 
@@ -34,10 +34,14 @@ annotations:
   artifacthub.io/license: MIT
   artifacthub.io/changes: |
     - kind: added
-      description: Add configurable Generic CRIS URL and API key
+      description: Make Keycloak proxy headers and dynamic backchannel URLs configurable
     - kind: changed
-      description: Bump DAMAP backend and frontend to 5.1.0
+      description: Bump DAMAP backend and frontend to 5.1.1
     - kind: changed
-      description: Bump Keycloak to 26.6
-    - kind: changed
-      description: Update evaluation service config to use tenant-aware settings
+      description: Bump Keycloak to 26.7
+    - kind: fixed
+      description: Preserve the generated Keycloak database password on upgrade
+    - kind: fixed
+      description: Use /auth in OIDC URLs only when DAMAP and Keycloak share a hostname
+    - kind: fixed
+      description: Prevent premature PostgreSQL restarts with startup probes and longer liveness timeouts
